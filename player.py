@@ -75,9 +75,16 @@ class Jump:
         pass
     @staticmethod
     def draw(obj):
-        obj.work_image.clip_draw(obj.frame * 129, 0, 129, 146, obj.x, obj.y)
+        global jumpcount
+        if jumpcount < 25:
+            obj.jump_image[0].draw_now(obj.x,obj.y)
+        elif jumpcount >= 25 and jumpcount <= 75:
+            obj.jump_image[1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
+        elif jumpcount >75:
+            obj.jump_image[2].draw_now(obj.x,obj.y)
     @staticmethod
     def update(obj):
+        obj.frame = (obj.frame + 1) % 2
         global jumpcount
         jumpcount += 2
 
