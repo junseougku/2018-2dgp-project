@@ -1,8 +1,8 @@
 
 from pico2d import *
-gravity = 0.0
-import time
-DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN = range(5)
+
+
+DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN ,  = range(5)
 key_event_table = {
     #(SDL_KEYDOWN, SDLK_RIGHT): RIGHT,
     #(SDL_KEYDOWN, SDLK_LEFT): LEFT,
@@ -103,6 +103,8 @@ next_state_table = {
     Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Work , JUMP_DOWN : Jump},
     Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : Jump , TIME_OUT : Work}
 }
+
+
 class Player:
     def __init__(self):
         self.x = 150
@@ -141,4 +143,3 @@ class Player:
             if (event.type, event.key) in key_event_table:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)
-jump = False
