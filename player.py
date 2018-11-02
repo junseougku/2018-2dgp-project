@@ -1,8 +1,8 @@
 
 from pico2d import *
 gravity = 0.0
-import math
-DOWN_DOWN ,DOWN_UP,SPACE_DOWN= range(3)
+import time
+DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT= range(4)
 key_event_table = {
     #(SDL_KEYDOWN, SDLK_RIGHT): RIGHT,
     #(SDL_KEYDOWN, SDLK_LEFT): LEFT,
@@ -11,7 +11,6 @@ key_event_table = {
     (SDL_KEYUP,SDLK_DOWN) : DOWN_UP,
     (SDL_KEYDOWN,SDLK_SPACE) : SPACE_DOWN,
 }
-current_time = get_time()
 
 class Work:
     @staticmethod
@@ -36,15 +35,19 @@ class Head:
         pass
     @staticmethod
     def draw(obj):
-        obj.head_image.clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y)
+        obj.head_image.clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y - 30.5)
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
 
+start_time = get_time()
+
 class Run:
     @staticmethod
     def enter(obj):
+        global start_time
         obj.frame = 0
+        start_time = get_time()
     @staticmethod
     def exit(obj):
         pass
@@ -53,12 +56,29 @@ class Run:
         obj.run_image.clip_draw(obj.frame * 132 , 0 ,132,148,obj.x,obj.y)
     @staticmethod
     def update(obj):
+        global start_time
         obj.frame = (obj.frame + 1) % 4
+        if get_time() - start_time > 1.5:
+            obj.add_event(TIME_OUT)
+
+class Jump:
+    @staticmethod
+    def enter(obj):
+        obj.frame = 0
+    @staticmethod
+    def exit(obj):
+        pass
+    @staticmethod
+    def draw(obj):
+        pass
+    @staticmethod
+    def update(obj):
+        pass
 
 next_state_table = {
     Work: {DOWN_DOWN: Head , DOWN_UP : Work , SPACE_DOWN : Run },
     Head: {DOWN_DOWN: Head, DOWN_UP: Work, SPACE_DOWN : Head},
-    Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run}
+    Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Work}
 }
 class Player:
     def __init__(self):
@@ -95,8 +115,9 @@ class Player:
         self.draw()
         if i == 20:
             jump = False
-    def jump(self,i):
-        self.draw_curve(self.x, self.x , self.x , self.y, self.y + 100, self.y,i)
+    def jump(self):
+        #self.draw_curve(self.x, self.x , self.x , self.y, self.y + 100, self.y,i)
+        pass
     def add_event(self,event):
         self.event_que.insert(0, event)
     def handle_events(self):
