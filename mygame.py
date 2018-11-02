@@ -13,7 +13,6 @@ def run():
     while running:
         clear_canvas()
         playerchar.update()
-        playerchar.jump()
         grass_01.update()
 
 

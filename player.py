@@ -2,7 +2,7 @@
 from pico2d import *
 gravity = 0.0
 import time
-DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT= range(4)
+DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN = range(5)
 key_event_table = {
     #(SDL_KEYDOWN, SDLK_RIGHT): RIGHT,
     #(SDL_KEYDOWN, SDLK_LEFT): LEFT,
@@ -10,6 +10,7 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_DOWN): DOWN_DOWN,
     (SDL_KEYUP,SDLK_DOWN) : DOWN_UP,
     (SDL_KEYDOWN,SDLK_SPACE) : SPACE_DOWN,
+    (SDL_KEYDOWN,SDLK_x) : JUMP_DOWN
 }
 
 class Work:
@@ -60,25 +61,40 @@ class Run:
         obj.frame = (obj.frame + 1) % 4
         if get_time() - start_time > 1.5:
             obj.add_event(TIME_OUT)
-
+jumpcount = 0
 class Jump:
     @staticmethod
     def enter(obj):
         obj.frame = 0
+        obj.start_y = obj.y
+        obj.max_y = obj.y + 100
+        obj.end_y = obj.y
+
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
-        pass
+        obj.work_image.clip_draw(obj.frame * 129, 0, 129, 146, obj.x, obj.y)
     @staticmethod
     def update(obj):
-        pass
+        global jumpcount
+        jumpcount += 2
+
+        t = jumpcount / 100
+        x = (2 * t ** 2 - 3 * t + 1) * obj.x + (-4 * t ** 2 + 4 * t) * obj.x + (2 * t ** 2 - t) * obj.x
+        y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
+        obj.x = x
+        obj.y = y
+        if jumpcount == 100:
+            jumpcount = 0
+            obj.add_event(TIME_OUT)
 
 next_state_table = {
-    Work: {DOWN_DOWN: Head , DOWN_UP : Work , SPACE_DOWN : Run },
-    Head: {DOWN_DOWN: Head, DOWN_UP: Work, SPACE_DOWN : Head},
-    Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Work}
+    Work: {DOWN_DOWN: Head , DOWN_UP : Work , SPACE_DOWN : Run ,JUMP_DOWN : Jump},
+    Head: {DOWN_DOWN: Head, DOWN_UP: Work, SPACE_DOWN : Head , JUMP_DOWN : Jump},
+    Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Work , JUMP_DOWN : Jump},
+    Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : Jump , TIME_OUT : Work}
 }
 class Player:
     def __init__(self):
@@ -91,6 +107,12 @@ class Player:
         self.work_image = load_image("image\\work_player_.png")
         self.run_image = load_image("image\\run_player_.png")
         self.head_image = load_image("image\\head_player_.png")
+        self.jump_image = [ load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
+                            load_image("image\\player_jump_4.png")]
+
+        self.start_y = 0
+        self.max_y = 0
+        self.end_y = 0
     def draw(self):
         self.current_state.draw(self)
     def update(self):
@@ -104,20 +126,6 @@ class Player:
         self.current_state.enter(self)
     def exit(self):
         self.current_state.exit(self)
-    def draw_curve(self,curxx,heix,dotx,cury,heiy,doty,i):
-        global jump
-
-        t = i / 100
-        x = (2*t**2-3*t+1) * curxx + (-4 * t ** 2 + 4 * t) * heix+(2*t**2-t)*dotx
-        y = (2*t **2-3*t+1) * cury +(-4 * t ** 2 + 4 * t) * heiy+(2*t**2-t)*doty
-        self.x = x
-        self.y = y
-        self.draw()
-        if i == 20:
-            jump = False
-    def jump(self):
-        #self.draw_curve(self.x, self.x , self.x , self.y, self.y + 100, self.y,i)
-        pass
     def add_event(self,event):
         self.event_que.insert(0, event)
     def handle_events(self):
