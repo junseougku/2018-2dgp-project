@@ -6,34 +6,23 @@ import grass
 playerchar = player.Player()
 grass_01 = grass.Grass()
 
-def handle_events():
-    global running
-    global  jump
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            running = False
-            close_canvas()
-
-        if (event.type ,event.key) == (SDL_KEYDOWN,SDLK_x):
-            jump = True
-        elif (event.type,event.key) == (SDL_KEYDOWN,SDLK_DOWN):
-            pass
 
 running = True
-jump = False
+jumpheight = 0
 def run():
     global running
+    global  jumpheight
     while running:
         clear_canvas()
         playerchar.update()
 
         grass_01.update()
-        if jump:
-            playerchar.jump()
+        if player.jump:
+            playerchar.jump(jumpheight)
+            jumpheight += 2
         grass_01.draw()
         playerchar.draw()
 
         update_canvas()
-        handle_events()
+        playerchar.handle_events()
         delay(0.05)
