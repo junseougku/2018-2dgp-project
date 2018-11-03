@@ -96,13 +96,16 @@ class Jump:
         if jumpcount == 100:
             jumpcount = 0
             obj.add_event(TIME_OUT)
+class DoubleJump:
     @staticmethod
-    def doublejump_enter(obj):
+    def enter(obj):
         obj.end_y = obj.start_y
         obj.start_y = obj.y
         obj.max_y = obj.y + 100
     @staticmethod
-    def doublejump_update(obj):
+    def
+    @staticmethod
+    def update(obj):
         obj.frame = (obj.frame + 1) % 3
         global jumpcount
         jumpcount += 2

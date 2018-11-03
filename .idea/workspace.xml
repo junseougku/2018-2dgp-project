@@ -14,7 +14,7 @@
     <session id="1248054414">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="7" />
+          <entry key="project.closed" value="8" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.11" value="1" />
@@ -42,12 +42,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="7648" />
+          <entry key="py" value="7685" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="7648" />
+          <entry key="Python" value="7685" />
         </counts>
       </usages-collector>
     </session>
@@ -92,13 +92,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="151" column="16" selection-start-line="151" selection-start-column="16" selection-end-line="151" selection-end-column="16" />
+            <state relative-caret-position="285">
+              <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
               <folding>
-                <marker date="1541261466587" expanded="true" signature="705:3699" ph="..." />
-                <marker date="1541261466587" expanded="true" signature="1539:3294" ph="..." />
-                <marker date="1541261466587" expanded="true" signature="5146:5151" ph="..." />
-                <marker date="1541261466587" expanded="true" signature="5177:5222" ph="..." />
+                <marker date="1541262211208" expanded="true" signature="705:3721" ph="..." />
+                <marker date="1541262211208" expanded="true" signature="1539:3316" ph="..." />
+                <marker date="1541262211208" expanded="true" signature="5168:5173" ph="..." />
+                <marker date="1541262211208" expanded="true" signature="5199:5244" ph="..." />
               </folding>
             </state>
           </provider>
@@ -289,7 +289,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18005952" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -297,7 +296,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3295082" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.27540985" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.352459" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.352459" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -312,22 +311,6 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/player.py</url>
-          <line>152</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/player.py</url>
-          <line>151</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitattributes">
@@ -443,13 +426,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="151" column="16" selection-start-line="151" selection-start-column="16" selection-end-line="151" selection-end-column="16" />
+        <state relative-caret-position="285">
+          <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
           <folding>
-            <marker date="1541261466587" expanded="true" signature="705:3699" ph="..." />
-            <marker date="1541261466587" expanded="true" signature="1539:3294" ph="..." />
-            <marker date="1541261466587" expanded="true" signature="5146:5151" ph="..." />
-            <marker date="1541261466587" expanded="true" signature="5177:5222" ph="..." />
+            <marker date="1541262211208" expanded="true" signature="705:3721" ph="..." />
+            <marker date="1541262211208" expanded="true" signature="1539:3316" ph="..." />
+            <marker date="1541262211208" expanded="true" signature="5168:5173" ph="..." />
+            <marker date="1541262211208" expanded="true" signature="5199:5244" ph="..." />
           </folding>
         </state>
       </provider>
