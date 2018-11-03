@@ -10,7 +10,7 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_DOWN): DOWN_DOWN,
     (SDL_KEYUP,SDLK_DOWN) : DOWN_UP,
     (SDL_KEYDOWN,SDLK_SPACE) : SPACE_DOWN,
-    (SDL_KEYDOWN,SDLK_x) : JUMP_DOWN
+    (SDL_KEYDOWN,SDLK_x) : JUMP_DOWN,
 }
 
 class Work:
@@ -69,7 +69,7 @@ class Jump:
         obj.start_y = obj.y
         obj.max_y = obj.y + 100
         obj.end_y = obj.y
-
+        obj.jumping = True
     @staticmethod
     def exit(obj):
         pass
@@ -96,6 +96,11 @@ class Jump:
         if jumpcount == 100:
             jumpcount = 0
             obj.add_event(TIME_OUT)
+    @staticmethod
+    def doublejump_enter(obj):
+        obj.start_y = obj.y
+        obj.max_y = obj.y + 100
+        obj.end_y = obj.y
 
 next_state_table = {
     Work: {DOWN_DOWN: Head , DOWN_UP : Work , SPACE_DOWN : Run ,JUMP_DOWN : Jump},
@@ -118,10 +123,11 @@ class Player:
         self.head_image = load_image("image\\head_player_.png")
         self.jump_image = [ load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
                             load_image("image\\player_jump_4.png")]
-
+        self.doublejump_image = 
         self.start_y = 0
         self.max_y = 0
         self.end_y = 0
+        self.jumping = False
     def draw(self):
         self.current_state.draw(self)
     def update(self):
@@ -140,11 +146,13 @@ class Player:
     def handle_events(self):
         events = get_events()
         for event in events:
+            if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+                mygame.running = False
+                close_canvas()
+                del(mygame.playerchar)
+                del(mygame.grass_01)
             if event.type == SDL_KEYDOWN and event.key == SDLK_p:
-                if mygame.timestop == False:
-                    mygame.timestop = True
-                else:
-                    mygame.timestop = False
+                mygame.timestop = True
             elif (event.type, event.key) in key_event_table:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)

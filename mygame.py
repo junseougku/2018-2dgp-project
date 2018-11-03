@@ -10,6 +10,7 @@ frame_time = 0.0
 running = True
 timestop = False
 
+stage1 = load_image("image\\stage_1.png")
 
 def handle_events():
     global timestop
@@ -25,12 +26,13 @@ def run():
     while running:
         handle_events()
         if timestop == True:
+            current_time = time.time()
             continue
         clear_canvas()
         playerchar.update()
         grass_01.update()
 
-
+        stage1.draw(400,180)
         grass_01.draw()
         playerchar.draw()
 
@@ -38,5 +40,4 @@ def run():
         playerchar.handle_events()
         frame_time = time.time() - current_time
         current_time += frame_time
-
         delay(0.05)
