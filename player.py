@@ -72,15 +72,15 @@ class Jump:
         obj.jumping = True
     @staticmethod
     def exit(obj):
-        pass
+        obj.jumping = False
     @staticmethod
     def draw(obj):
         global jumpcount
         if jumpcount < 25:
-            obj.jump_image[0].draw_now(obj.x,obj.y)
+            obj.jump_image[0].draw_now(obj.x ,obj.y)
         elif jumpcount >= 25 and jumpcount <= 75:
             obj.jump_image[1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
-        elif jumpcount >75:
+        elif jumpcount > 75:
             obj.jump_image[2].draw_now(obj.x,obj.y)
     @staticmethod
     def update(obj):
@@ -98,9 +98,23 @@ class Jump:
             obj.add_event(TIME_OUT)
     @staticmethod
     def doublejump_enter(obj):
+        obj.end_y = obj.start_y
         obj.start_y = obj.y
         obj.max_y = obj.y + 100
-        obj.end_y = obj.y
+    @staticmethod
+    def doublejump_update(obj):
+        obj.frame = (obj.frame + 1) % 3
+        global jumpcount
+        jumpcount += 2
+
+        t = jumpcount / 100
+        x = (2 * t ** 2 - 3 * t + 1) * obj.x + (-4 * t ** 2 + 4 * t) * obj.x + (2 * t ** 2 - t) * obj.x
+        y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
+        obj.x = x
+        obj.y = y
+        if jumpcount == 200:
+            jumpcount = 0
+            obj.add_event(TIME_OUT)
 
 next_state_table = {
     Work: {DOWN_DOWN: Head , DOWN_UP : Work , SPACE_DOWN : Run ,JUMP_DOWN : Jump},
@@ -123,7 +137,8 @@ class Player:
         self.head_image = load_image("image\\head_player_.png")
         self.jump_image = [ load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
                             load_image("image\\player_jump_4.png")]
-        self.doublejump_image = 
+        self.doublejump_image = [ load_image("image\\player_doublejump_1.png") , load_image("image\\doublejump_player_.png")
+                                  , load_image("image\\player_doublejump_5.png")]
         self.start_y = 0
         self.max_y = 0
         self.end_y = 0
@@ -134,6 +149,8 @@ class Player:
         self.current_state.update(self)
         if len(self.event_que) > 0:
             event = self.event_que.pop()
+            if self.current_state == next_state_table[self.current_state][event]:
+                return
             self.current_state.exit(self)
             self.current_state = next_state_table[self.current_state][event]
             self.current_state.enter(self)
