@@ -104,7 +104,7 @@ next_state_table = {
     Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : Jump , TIME_OUT : Work}
 }
 
-
+import mygame
 class Player:
     def __init__(self):
         self.x = 150
@@ -140,6 +140,11 @@ class Player:
     def handle_events(self):
         events = get_events()
         for event in events:
-            if (event.type, event.key) in key_event_table:
+            if event.type == SDL_KEYDOWN and event.key == SDLK_p:
+                if mygame.timestop == False:
+                    mygame.timestop = True
+                else:
+                    mygame.timestop = False
+            elif (event.type, event.key) in key_event_table:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)

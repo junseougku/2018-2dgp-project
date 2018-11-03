@@ -13,12 +13,9 @@ timestop = False
 
 def handle_events():
     global timestop
-    events = get_events()
-    for event in events:
-        if event.type == SDL_KEYDOWN and event.key == SDLK_p:
-            if timestop == False:
-                timestop = True
-            else:
+    if timestop == True:
+        for event in get_events():
+            if event.type == SDL_KEYDOWN and event.key == SDLK_p:
                 timestop = False
 def run():
     global running
@@ -27,7 +24,8 @@ def run():
     current_time = time.time()
     while running:
         handle_events()
-        if timestop == True: continue
+        if timestop == True:
+            continue
         clear_canvas()
         playerchar.update()
         grass_01.update()
@@ -40,4 +38,5 @@ def run():
         playerchar.handle_events()
         frame_time = time.time() - current_time
         current_time += frame_time
+
         delay(0.05)
