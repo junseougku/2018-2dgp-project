@@ -76,57 +76,59 @@ class Jump:
     @staticmethod
     def draw(obj):
         global jumpcount
-        if jumpcount < 25:
+        if jumpcount < 10:
             obj.jump_image[0].draw_now(obj.x ,obj.y)
-        elif jumpcount >= 25 and jumpcount <= 50:
+        elif jumpcount >= 10 and jumpcount <= 20:
             obj.jump_image[1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
-        elif jumpcount > 50:
+        elif jumpcount > 20:
             obj.jump_image[2].draw_now(obj.x,obj.y)
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
         global jumpcount
-        jumpcount += 5
+        jumpcount += 2
 
-        t = jumpcount / 75
+        t = jumpcount / 40
         x = (2 * t ** 2 - 3 * t + 1) * obj.x + (-4 * t ** 2 + 4 * t) * obj.x + (2 * t ** 2 - t) * obj.x
         y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
         obj.x = x
         obj.y = y
-        if jumpcount == 75:
+        if jumpcount == 40:
             jumpcount = 0
             obj.add_event(TIME_OUT)
 class DoubleJump:
     @staticmethod
     def enter(obj):
+        global jumpcount
         obj.frame = 0
         obj.end_y = obj.start_y
         obj.start_y = obj.y
-        obj.max_y = obj.y + 100
+        obj.max_y = obj.y + 150
+        jumpcount = 0
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
         global jumpcount
-        if jumpcount < 50:
+        if jumpcount < 40:
             obj.doublejump_image[0].draw_now(obj.x, obj.y)
-        elif jumpcount >= 50 and jumpcount <= 100:
+        elif jumpcount >= 40 and jumpcount <= 60:
             obj.doublejump_image[1].clip_draw(obj.frame * 116, 0, 116, 127, obj.x, obj.y)
-        elif jumpcount > 100:
+        elif jumpcount > 60:
             obj.doublejump_image[2].draw_now(obj.x,obj.y)
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
         global jumpcount
-        jumpcount += 5
+        jumpcount += 2
 
-        t = jumpcount / 150
+        t = jumpcount / 80
         x = (2 * t ** 2 - 3 * t + 1) * obj.x + (-4 * t ** 2 + 4 * t) * obj.x + (2 * t ** 2 - t) * obj.x
         y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
         obj.x = x
         obj.y = y
-        if jumpcount == 150:
+        if jumpcount == 80:
             jumpcount = 0
             obj.add_event(TIME_OUT)
 
@@ -180,8 +182,6 @@ class Player:
         for event in events:
             if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                 mygame.running = False
-                mygame.exit()
-                close_canvas()
             if event.type == SDL_KEYDOWN and event.key == SDLK_p:
                 mygame.timestop = True
             elif (event.type, event.key) in key_event_table:

@@ -6,6 +6,7 @@ import item
 
 playerchar = None
 grass_01 = None
+grass_02 = None
 medicine = None
 
 frame_time = 0.0
@@ -14,6 +15,30 @@ timestop = False
 
 stage1 = None
 
+objects = [ [], []]
+
+def add_object(o,layer):
+    objects[layer].append(o)
+
+def remove_object(o):
+    for i in range(len(objects)):
+        if o in objects[i]:
+            objects[i].remove(o)
+            del o
+
+def clear():
+    for o in all_objects():
+        del o
+    objects.clear()
+
+def all_objects():
+    for i in range(len(objects)):
+        for o in objects[i]:
+            yield o
+
+
+
+
 def handle_events():
     global timestop
     if timestop == True:
@@ -21,20 +46,33 @@ def handle_events():
             if event.type == SDL_KEYDOWN and event.key == SDLK_p:
                 timestop = False
 
+def init(obj):
+    add_object(obj,1)
+
 def enter():
-    global  playerchar, grass_01 , medicine , stage1,current_time
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time
     playerchar = player.Player()
-    grass_01 = grass.Grass()
+    grass_01 = grass.Grass(431)
+    grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
     stage1 = load_image("image\\stage_1.png")
     current_time = time.time()
+
+    init(medicine)
+    init(grass_01)
+    init(grass_02)
+
+
+
+def dyna_update(obj):
+    obj.x -= obj.velocity * frame_time
 
 def update():
     global frame_time, current_time
     playerchar.update()
     grass_01.update()
+    grass_02.update()
     medicine.update()
-    playerchar.handle_events()
     frame_time = time.time() - current_time
     current_time += frame_time
 
@@ -42,17 +80,21 @@ def draw():
     clear_canvas()
     stage1.draw(400, 180)
     grass_01.draw()
+    grass_02.draw()
     medicine.draw()
     playerchar.draw()
     update_canvas()
 
 def exit():
-    global grass_01,playerchar,medicine
+    global grass_01,grass_02,playerchar,medicine
     del(grass_01)
+    del(grass_02)
     del(playerchar)
     del(medicine)
-    
+    close_canvas()
+
 def main():
+    global current_time, playerchar
     enter()
     while running:
         handle_events()
@@ -61,8 +103,8 @@ def main():
             continue
         update()
         draw()
+        playerchar.handle_events()
         delay(0.05)
     exit()
-
 if __name__  == '__main__':
     main()
