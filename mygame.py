@@ -2,9 +2,11 @@ from pico2d import *
 import time
 import player
 import grass
+import item
 
 playerchar = player.Player()
 grass_01 = grass.Grass()
+medicine = item.Medicine()
 
 frame_time = 0.0
 running = True
@@ -31,9 +33,11 @@ def run():
         clear_canvas()
         playerchar.update()
         grass_01.update()
+        medicine.update()
 
         stage1.draw(400,180)
         grass_01.draw()
+        medicine.draw()
         playerchar.draw()
 
         update_canvas()
