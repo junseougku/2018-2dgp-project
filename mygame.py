@@ -8,6 +8,14 @@ playerchar = None
 grass_01 = None
 grass_02 = None
 medicine = None
+silver_coin = None
+
+PIXEL_PER_METER = (10.0/ 0.3)
+GRASS_SPEED = 20.0
+GRASS_SPEED_MPM = (GRASS_SPEED * 1000.0 / 60.0)
+GRASS_SPEED_MPS = (GRASS_SPEED_MPM / 60.0)
+GRASS_SPEED_PPS = (GRASS_SPEED_MPS * PIXEL_PER_METER)
+
 
 frame_time = 0.0
 running = True
@@ -50,17 +58,18 @@ def init(obj):
     add_object(obj,1)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
     stage1 = load_image("image\\stage_1.png")
     current_time = time.time()
-
+    silver_coin = item.SilverCoin()
     init(medicine)
     init(grass_01)
     init(grass_02)
+    init(silver_coin)
 
 
 
@@ -73,6 +82,7 @@ def update():
     grass_01.update()
     grass_02.update()
     medicine.update()
+    silver_coin.update()
     frame_time = time.time() - current_time
     current_time += frame_time
 
@@ -82,6 +92,7 @@ def draw():
     grass_01.draw()
     grass_02.draw()
     medicine.draw()
+    silver_coin.draw()
     playerchar.draw()
     update_canvas()
 
@@ -91,6 +102,7 @@ def exit():
     del(grass_02)
     del(playerchar)
     del(medicine)
+    del(silver_coin)
     close_canvas()
 
 def main():
