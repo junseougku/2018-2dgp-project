@@ -12,6 +12,8 @@ class Medicine:
     def update(self):
         self.frame = (self.frame + 1) % 4
         mygame.dyna_update(self)
+    def get_bb(self):
+        return 0,0,0,0
 
 class SilverCoin:
     def __init__(self):
@@ -26,3 +28,5 @@ class SilverCoin:
     def update(self):
         self.frame = (self.frame + 1) % 4
         mygame.dyna_update(self)
+    def get_bb(self):
+        return self.x - 24, self.y -24 , self.x + 24, self.y + 24

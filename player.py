@@ -26,6 +26,9 @@ class Work:
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 4
+    @staticmethod
+    def get_bb(obj):
+        return obj.x - 64.5,obj.y - 73, obj.x + 64.5,obj.y + 73
 
 class Head:
     @staticmethod
@@ -40,6 +43,9 @@ class Head:
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
+    @staticmethod
+    def get_bb(obj):
+        return obj.x - 92 , obj.y - 42.5 , obj.x + 92 , obj.y + 42.5
 
 start_time = get_time()
 
@@ -61,6 +67,9 @@ class Run:
         obj.frame = (obj.frame + 1) % 4
         if get_time() - start_time > 1.5:
             obj.add_event(TIME_OUT)
+    @staticmethod
+    def get_bb(obj):
+        return obj.x - 67 , obj.y - 74 , obj.x + 67 , obj.y + 74
 jumpcount = 0
 class Jump:
     @staticmethod
@@ -96,6 +105,16 @@ class Jump:
         if jumpcount == 40:
             jumpcount = 0
             obj.add_event(TIME_OUT)
+    @staticmethod
+    def get_bb(obj):
+        global jumpcount
+        if jumpcount < 10:
+            return obj.x - 51.5 , obj.y - 87 , obj.x + 51.5 , obj.y + 87
+        elif jumpcount >= 10 and jumpcount <= 20:
+            return obj.x - 66 , obj.y - 68 , obj.x + 66 , obj.y + 68
+        elif jumpcount > 20:
+            return obj.x - 60.5 , obj.y - 74 , obj.x + 60.5 , obj.y + 74
+
 class DoubleJump:
     @staticmethod
     def enter(obj):
@@ -131,7 +150,9 @@ class DoubleJump:
         if jumpcount == 80:
             jumpcount = 0
             obj.add_event(TIME_OUT)
-
+    @staticmethod
+    def get_bb(obj):
+        return obj.x - 72 , obj.y - 71.5 , obj.x + 72 , obj.y + 71.5
 next_state_table = {
     Work: {DOWN_DOWN: Head , DOWN_UP : Work , SPACE_DOWN : Run ,JUMP_DOWN : Jump},
     Head: {DOWN_DOWN: Head, DOWN_UP: Work, SPACE_DOWN : Head , JUMP_DOWN : Jump},
@@ -162,6 +183,7 @@ class Player:
         self.jumping = False
     def draw(self):
         self.current_state.draw(self)
+        draw_rectangle(*self.current_state.get_bb(self))
     def update(self):
         self.current_state.update(self)
         if len(self.event_que) > 0:
@@ -187,3 +209,12 @@ class Player:
             elif (event.type, event.key) in key_event_table:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)
+    def get_bb(self,obj):
+        left_a,bottom_a,right_a,top_a = self.current_state.get_bb(self)
+        left_b,bottom_b,right_b,top_b = obj.get_bb()
+        if left_a > right_b : return False
+        if right_a < left_b : return False
+        if top_a < bottom_b : return False
+        if bottom_a > top_b : return False
+
+        return True

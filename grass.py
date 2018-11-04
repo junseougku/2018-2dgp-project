@@ -15,5 +15,6 @@ class Grass:
         mygame.dyna_update(self)
         if self.x < -431:
             self.x = 370 + 862
-
+    def get_bb(self):
+        return 0,0,0,0
 

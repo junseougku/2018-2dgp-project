@@ -83,6 +83,9 @@ def update():
     grass_02.update()
     medicine.update()
     silver_coin.update()
+    for o in all_objects():
+        if playerchar.get_bb(o):
+            print("ddd")
     frame_time = time.time() - current_time
     current_time += frame_time
 
@@ -94,6 +97,8 @@ def draw():
     medicine.draw()
     silver_coin.draw()
     playerchar.draw()
+    for o in all_objects():
+        draw_rectangle(*o.get_bb())
     update_canvas()
 
 def exit():
