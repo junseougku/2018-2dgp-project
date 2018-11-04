@@ -24,4 +24,4 @@ def run():
         update_canvas()
 
 def next_state():
-    mygame.run()
+    mygame.main()

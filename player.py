@@ -180,9 +180,8 @@ class Player:
         for event in events:
             if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                 mygame.running = False
+                mygame.exit()
                 close_canvas()
-                del(mygame.playerchar)
-                del(mygame.grass_01)
             if event.type == SDL_KEYDOWN and event.key == SDLK_p:
                 mygame.timestop = True
             elif (event.type, event.key) in key_event_table:

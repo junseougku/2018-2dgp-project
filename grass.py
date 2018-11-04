@@ -19,8 +19,8 @@ class Grass:
         self.grass_image.draw(self.x1 ,self.y)
         self.grass_image.draw( self.x2 ,self.y)
     def update(self):
-        self.x1 -= self.velocity * mygame.frame_time;
-        self.x2 -=self.velocity * mygame.frame_time;
+        self.x1 -= self.velocity * mygame.frame_time
+        self.x2 -= self.velocity * mygame.frame_time
         if self.x1 < -431:
             self.x1 = self.x2 + 862
         if self.x2 < -431:
