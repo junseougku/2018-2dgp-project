@@ -11,9 +11,9 @@ class Medicine:
         self.medicine_image.clip_draw(self.frame * 85, 0, 85, 87, self.x, self.y)
     def update(self):
         self.frame = (self.frame + 1) % 4
-        mygame.dyna_update(self)
+        mygame.move_update(self)
     def get_bb(self):
-        return 0,0,0,0
+        return self.x - 42.5, self.y -43.5 , self.x + 42.5, self.y + 43.5
 
 class SilverCoin:
     def __init__(self):
@@ -27,6 +27,6 @@ class SilverCoin:
 
     def update(self):
         self.frame = (self.frame + 1) % 4
-        mygame.dyna_update(self)
+        mygame.move_update(self)
     def get_bb(self):
         return self.x - 24, self.y -24 , self.x + 24, self.y + 24

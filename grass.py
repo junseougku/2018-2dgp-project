@@ -12,7 +12,7 @@ class Grass:
     def draw(self):
         self.grass_image.draw(self.x,self.y)
     def update(self):
-        mygame.dyna_update(self)
+        mygame.move_update(self)
         if self.x < -431:
             self.x = 370 + 862
     def get_bb(self):

@@ -73,7 +73,7 @@ def enter():
 
 
 
-def dyna_update(obj):
+def move_update(obj):
     obj.x -= obj.velocity * frame_time
 
 def update():
@@ -85,17 +85,16 @@ def update():
     silver_coin.update()
     for o in all_objects():
         if playerchar.get_bb(o):
-            print("ddd")
+            print("remove")
+            remove_object(o)
     frame_time = time.time() - current_time
     current_time += frame_time
 
 def draw():
     clear_canvas()
     stage1.draw(400, 180)
-    grass_01.draw()
-    grass_02.draw()
-    medicine.draw()
-    silver_coin.draw()
+    for o in all_objects():
+        o.draw()
     playerchar.draw()
     for o in all_objects():
         draw_rectangle(*o.get_bb())
