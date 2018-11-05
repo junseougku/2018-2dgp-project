@@ -5,7 +5,7 @@ class Obstacle:
     def __init__(self):
         self.frame = 0
         self.obstacle_image = load_image("image\\obstacle_1.png")
-        self.x = 300
+        self.x = 900
         self.y = 100
         self.velocity = mygame.GRASS_SPEED_PPS
 
