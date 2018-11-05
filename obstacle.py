@@ -14,6 +14,7 @@ class Obstacle:
 
     def update(self):
         mygame.move_update(self)
-
+        if self.x < -100:
+            self.x = 850
     def get_bb(self):
         return self.x - 31, self.y - 50, self.x + 31, self.y + 50
