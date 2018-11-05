@@ -17,12 +17,13 @@ class Work:
     @staticmethod
     def enter(obj):
         obj.frame = 0
+        return 0
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
-        obj.work_image.clip_draw(obj.frame * 129, 0, 129, 146, obj.x, obj.y)
+        obj.images[0].clip_draw(obj.frame * 129, 0, 129, 146, obj.x, obj.y)
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 4
@@ -34,12 +35,13 @@ class Head:
     @staticmethod
     def enter(obj):
         obj.frame = 0
+        return 1
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
-        obj.head_image.clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y - 30.5)
+        obj.images[1].clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y - 30.5)
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
@@ -47,25 +49,26 @@ class Head:
     def get_bb(obj):
         return obj.x - 92 , obj.y - 42.5 , obj.x + 92 , obj.y + 42.5
 
-start_time = get_time()
-
+run_start_time = get_time()
+cool_start_time = get_time()
 class Run:
     @staticmethod
     def enter(obj):
-        global start_time
+        global run_start_time
         obj.frame = 0
-        start_time = get_time()
+        run_start_time = get_time()
+        return 2
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
-        obj.run_image.clip_draw(obj.frame * 132 , 0 ,132,148,obj.x,obj.y)
+        obj.images[2].clip_draw(obj.frame * 132 , 0 ,132,148,obj.x,obj.y)
     @staticmethod
     def update(obj):
-        global start_time
+        global run_start_time
         obj.frame = (obj.frame + 1) % 4
-        if get_time() - start_time > 1.5:
+        if get_time() - run_start_time > 1.5:
             obj.add_event(TIME_OUT)
     @staticmethod
     def get_bb(obj):
@@ -74,11 +77,13 @@ jumpcount = 0
 class Jump:
     @staticmethod
     def enter(obj):
+
         obj.frame = 0
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
         obj.end_y = obj.y
         obj.jumping = True
+        return 3
     @staticmethod
     def exit(obj):
         obj.jumping = False
@@ -86,11 +91,11 @@ class Jump:
     def draw(obj):
         global jumpcount
         if jumpcount < 10:
-            obj.jump_image[0].draw_now(obj.x ,obj.y)
+            obj.images[3][0].draw_now(obj.x ,obj.y)
         elif jumpcount >= 10 and jumpcount <= 20:
-            obj.jump_image[1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
+            obj.images[3][1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
         elif jumpcount > 20:
-            obj.jump_image[2].draw_now(obj.x,obj.y)
+            obj.images[3][2].draw_now(obj.x,obj.y)
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
@@ -124,6 +129,7 @@ class DoubleJump:
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
         jumpcount = 0
+        return 4
     @staticmethod
     def exit(obj):
         pass
@@ -131,11 +137,11 @@ class DoubleJump:
     def draw(obj):
         global jumpcount
         if jumpcount < 40:
-            obj.doublejump_image[0].draw_now(obj.x, obj.y)
+            obj.images[4][0].draw_now(obj.x, obj.y)
         elif jumpcount >= 40 and jumpcount <= 60:
-            obj.doublejump_image[1].clip_draw(obj.frame * 116, 0, 116, 127, obj.x, obj.y)
+            obj.images[4][1].clip_draw(obj.frame * 116, 0, 116, 127, obj.x, obj.y)
         elif jumpcount > 60:
-            obj.doublejump_image[2].draw_now(obj.x,obj.y)
+            obj.images[4][2].draw_now(obj.x,obj.y)
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
@@ -160,27 +166,28 @@ next_state_table = {
     Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : DoubleJump , TIME_OUT : Work},
     DoubleJump : {DOWN_DOWN : DoubleJump , DOWN_UP : DoubleJump , SPACE_DOWN : DoubleJump , JUMP_DOWN : DoubleJump , TIME_OUT : Work}
 }
-
+opstat = 1.0
+cool_end_time = False
 import mygame
 class Player:
+
     def __init__(self):
+        self.images = [load_image("image\\work_player_.png"),load_image("image\\head_player_.png"),load_image("image\\run_player_.png")
+                       ,[load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
+                            load_image("image\\player_jump_4.png")] , [ load_image("image\\player_doublejump_1.png") , load_image("image\\doublejump_player_.png")
+                                  , load_image("image\\player_doublejump_5.png")]]
+        self.ani_num = 0
         self.x = 150
         self.y = 100
         self.frame = 0
         self.current_state = Work
         self.jumpspeed = 0.0
         self.event_que = []
-        self.work_image = load_image("image\\work_player_.png")
-        self.run_image = load_image("image\\run_player_.png")
-        self.head_image = load_image("image\\head_player_.png")
-        self.jump_image = [ load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
-                            load_image("image\\player_jump_4.png")]
-        self.doublejump_image = [ load_image("image\\player_doublejump_1.png") , load_image("image\\doublejump_player_.png")
-                                  , load_image("image\\player_doublejump_5.png")]
         self.start_y = 0
         self.max_y = 0
         self.end_y = 0
         self.jumping = False
+        self.op = False
     def draw(self):
         self.current_state.draw(self)
         draw_rectangle(*self.current_state.get_bb(self))
@@ -194,7 +201,7 @@ class Player:
             self.current_state = next_state_table[self.current_state][event]
             self.current_state.enter(self)
     def enter(self):
-        self.current_state.enter(self)
+        self.ani_num = self.current_state.enter(self)
     def exit(self):
         self.current_state.exit(self)
     def add_event(self,event):
@@ -218,3 +225,26 @@ class Player:
         if bottom_a > top_b : return False
 
         return True
+    def cooltime_enter(self):
+        global cool_start_time
+        global cool_end_time
+        cool_start_time = get_time()
+        cool_end_time = get_time()
+        self.op = True
+        self.images[self.ani_num].opacify(0.5)
+    def cooltime(self):
+        global cool_start_time
+        global opstat
+        global  cool_end_time
+        if self.op == True and get_time() - cool_start_time > 0.1:
+            cool_start_time = get_time()
+            if opstat == 1.0:
+                opstat = 0.5
+                self.images[self.ani_num].opacify(opstat)
+            elif opstat == 0.5:
+                opstat = 1.0
+                self.images[self.ani_num].opacify(opstat)
+        if self.op == True and get_time() - cool_end_time > 1:
+            self.op = False
+            self.images[self.ani_num].opacify(1)
+

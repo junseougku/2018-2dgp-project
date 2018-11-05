@@ -24,16 +24,18 @@ running = True
 timestop = False
 
 stage1 = None
-
+sky_stage1 = None
 objects = [[],[]]
 def add_object(o,layer):
     objects[layer].append(o)
 
 def remove_object(o):
     for i in range(len(objects)):
-        if i == 1:
+        if i == 1 and playerchar.op == False:
+            playerchar.cooltime_enter()
             break
         if o in objects[i]:
+            if i == 1: break
             objects[i].remove(o)
             del o
             break
@@ -61,12 +63,13 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,sky_stage1
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
     stage1 = load_image("image\\stage_1.png")
+    sky_stage1 = load_image("image\\stage_sky_1.png")
     obstacle_01 = obstacle.Obstacle()
     current_time = time.time()
     silver_coin = item.SilverCoin()
@@ -84,6 +87,7 @@ def move_update(obj):
 def update():
     global frame_time, current_time
     playerchar.update()
+    playerchar.cooltime()
     for o in all_objects():
         o.update()
     for o in all_objects():
@@ -95,6 +99,7 @@ def update():
 
 def draw():
     clear_canvas()
+    sky_stage1.draw(400, 270)
     stage1.draw(400, 180)
     for o in all_objects():
         o.draw()
