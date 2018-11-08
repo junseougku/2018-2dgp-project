@@ -22,7 +22,7 @@ GRASS_SPEED_PPS = (GRASS_SPEED_MPS * PIXEL_PER_METER)
 frame_time = 0.0
 running = True
 timestop = False
-
+drawbb =True
 stage1 = None
 sky_stage1 = None
 objects = [[],[]]
@@ -104,8 +104,9 @@ def draw():
     for o in all_objects():
         o.draw()
     playerchar.draw()
-    for o in all_objects():
-        draw_rectangle(*o.get_bb())
+    if drawbb == True:
+        for o in all_objects():
+            draw_rectangle(*o.get_bb())
     update_canvas()
 
 def exit():

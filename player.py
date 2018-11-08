@@ -1,7 +1,7 @@
 
 from pico2d import *
 
-
+import mygame
 DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN   = range(5)
 key_event_table = {
     #(SDL_KEYDOWN, SDLK_RIGHT): RIGHT,
@@ -13,17 +13,19 @@ key_event_table = {
     (SDL_KEYDOWN,SDLK_x) : JUMP_DOWN,
 }
 
+
+
 class Work:
     @staticmethod
     def enter(obj):
         obj.frame = 0
-        return 0
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
         obj.images[0].clip_draw(obj.frame * 129, 0, 129, 146, obj.x, obj.y)
+        return obj.images[0]
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 4
@@ -35,13 +37,13 @@ class Head:
     @staticmethod
     def enter(obj):
         obj.frame = 0
-        return 1
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
         obj.images[1].clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y - 30.5)
+        return obj.images[1]
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
@@ -57,13 +59,13 @@ class Run:
         global run_start_time
         obj.frame = 0
         run_start_time = get_time()
-        return 2
     @staticmethod
     def exit(obj):
         pass
     @staticmethod
     def draw(obj):
         obj.images[2].clip_draw(obj.frame * 132 , 0 ,132,148,obj.x,obj.y)
+        return obj.images[2]
     @staticmethod
     def update(obj):
         global run_start_time
@@ -83,7 +85,6 @@ class Jump:
         obj.max_y = obj.y + 150
         obj.end_y = obj.y
         obj.jumping = True
-        return 3
     @staticmethod
     def exit(obj):
         obj.jumping = False
@@ -92,10 +93,13 @@ class Jump:
         global jumpcount
         if jumpcount < 10:
             obj.images[3][0].draw_now(obj.x ,obj.y)
+            return obj.images[3][0]
         elif jumpcount >= 10 and jumpcount <= 20:
             obj.images[3][1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
+            return obj.images[3][1]
         elif jumpcount > 20:
             obj.images[3][2].draw_now(obj.x,obj.y)
+            return obj.images[3][2]
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
@@ -103,9 +107,7 @@ class Jump:
         jumpcount += 2
 
         t = jumpcount / 40
-        x = (2 * t ** 2 - 3 * t + 1) * obj.x + (-4 * t ** 2 + 4 * t) * obj.x + (2 * t ** 2 - t) * obj.x
         y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
-        obj.x = x
         obj.y = y
         if jumpcount == 40:
             jumpcount = 0
@@ -129,7 +131,6 @@ class DoubleJump:
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
         jumpcount = 0
-        return 4
     @staticmethod
     def exit(obj):
         pass
@@ -138,10 +139,13 @@ class DoubleJump:
         global jumpcount
         if jumpcount < 40:
             obj.images[4][0].draw_now(obj.x, obj.y)
+            return obj.images[4][0]
         elif jumpcount >= 40 and jumpcount <= 60:
             obj.images[4][1].clip_draw(obj.frame * 116, 0, 116, 127, obj.x, obj.y)
+            return obj.images[4][1]
         elif jumpcount > 60:
             obj.images[4][2].draw_now(obj.x,obj.y)
+            return obj.images[4][2]
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
@@ -149,9 +153,7 @@ class DoubleJump:
         jumpcount += 2
 
         t = jumpcount / 80
-        x = (2 * t ** 2 - 3 * t + 1) * obj.x + (-4 * t ** 2 + 4 * t) * obj.x + (2 * t ** 2 - t) * obj.x
         y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
-        obj.x = x
         obj.y = y
         if jumpcount == 80:
             jumpcount = 0
@@ -168,7 +170,7 @@ next_state_table = {
 }
 opstat = 1.0
 cool_end_time = False
-import mygame
+
 class Player:
 
     def __init__(self):
@@ -176,7 +178,6 @@ class Player:
                        ,[load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
                             load_image("image\\player_jump_4.png")] , [ load_image("image\\player_doublejump_1.png") , load_image("image\\doublejump_player_.png")
                                   , load_image("image\\player_doublejump_5.png")]]
-        self.ani_num = 0
         self.x = 150
         self.y = 100
         self.frame = 0
@@ -188,21 +189,24 @@ class Player:
         self.end_y = 0
         self.jumping = False
         self.op = False
+        self.now_image = self.images[0]
     def draw(self):
-        self.current_state.draw(self)
-        draw_rectangle(*self.current_state.get_bb(self))
+        self.now_image = self.current_state.draw(self)
+        if mygame.drawbb == True:
+            draw_rectangle(*self.current_state.get_bb(self))
     def update(self):
         self.current_state.update(self)
         if len(self.event_que) > 0:
             event = self.event_que.pop()
             if self.current_state == next_state_table[self.current_state][event]:
                 return
-            self.current_state.exit(self)
+            self.exit()
             self.current_state = next_state_table[self.current_state][event]
-            self.current_state.enter(self)
+            self.enter()
     def enter(self):
-        self.ani_num = self.current_state.enter(self)
+        self.current_state.enter(self)
     def exit(self):
+        self.now_image.opacify(1)
         self.current_state.exit(self)
     def add_event(self,event):
         self.event_que.insert(0, event)
@@ -213,7 +217,11 @@ class Player:
                 mygame.running = False
             if event.type == SDL_KEYDOWN and event.key == SDLK_p:
                 mygame.timestop = True
-            elif (event.type, event.key) in key_event_table:
+            if event.type == SDL_KEYDOWN and event.key == SDLK_o:
+                if mygame.drawbb == False:
+                    mygame.drawbb = True
+                else: mygame.drawbb = False
+            if (event.type, event.key) in key_event_table:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)
     def get_bb(self,obj):
@@ -231,20 +239,18 @@ class Player:
         cool_start_time = get_time()
         cool_end_time = get_time()
         self.op = True
-        self.images[self.ani_num].opacify(0.5)
     def cooltime(self):
         global cool_start_time
         global opstat
-        global  cool_end_time
+        global cool_end_time
         if self.op == True and get_time() - cool_start_time > 0.1:
             cool_start_time = get_time()
             if opstat == 1.0:
                 opstat = 0.5
-                self.images[self.ani_num].opacify(opstat)
+                self.now_image.opacify(opstat)
             elif opstat == 0.5:
                 opstat = 1.0
-                self.images[self.ani_num].opacify(opstat)
-        if self.op == True and get_time() - cool_end_time > 1:
-            self.op = False
-            self.images[self.ani_num].opacify(1)
-
+                self.now_image.opacify(opstat)
+            if get_time() - cool_end_time > 1:
+                self.op = False
+                self.now_image.opacify(1)
