@@ -75,11 +75,13 @@ class Run:
     @staticmethod
     def get_bb(obj):
         return obj.x - 67 , obj.y - 74 , obj.x + 67 , obj.y + 74
-jumpcount = 0
+
+jump_stat = 0
 class Jump:
     @staticmethod
     def enter(obj):
-
+        global jump_stat
+        jump_stat = 40
         obj.frame = 0
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
@@ -89,78 +91,56 @@ class Jump:
     def exit(obj):
         for i in range(3):
             obj.images[3][i].opacify(1)
-        obj.jumping = False
     @staticmethod
     def draw(obj):
-        global jumpcount
-        if jumpcount < 10:
+        if obj.jumpcount < 10:
             obj.images[3][0].draw_now(obj.x ,obj.y)
             return obj.images[3][0]
-        elif jumpcount >= 10 and jumpcount <= 20:
+        elif obj.jumpcount >= 10 and obj.jumpcount <= 20:
             obj.images[3][1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
             return obj.images[3][1]
-        elif jumpcount > 20:
+        elif obj.jumpcount > 20:
             obj.images[3][2].draw_now(obj.x,obj.y)
             return obj.images[3][2]
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 2
-        global jumpcount
-        jumpcount += 2
-
-        t = jumpcount / 40
-        y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
-        obj.y = y
-        if jumpcount == 40:
-            jumpcount = 0
-            obj.add_event(TIME_OUT)
     @staticmethod
     def get_bb(obj):
-        global jumpcount
-        if jumpcount < 10:
+        if obj.jumpcount < 10:
             return obj.x - 51.5 , obj.y - 87 , obj.x + 51.5 , obj.y + 87
-        elif jumpcount >= 10 and jumpcount <= 20:
+        elif obj.jumpcount >= 10 and obj.jumpcount <= 20:
             return obj.x - 66 , obj.y - 68 , obj.x + 66 , obj.y + 68
-        elif jumpcount > 20:
+        elif obj.jumpcount > 20:
             return obj.x - 60.5 , obj.y - 74 , obj.x + 60.5 , obj.y + 74
+jumpcount = 0
 
 class DoubleJump:
     @staticmethod
     def enter(obj):
-        global jumpcount
         obj.frame = 0
         obj.end_y = obj.start_y
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
-        jumpcount = 0
+        obj.doublejumping = True
     @staticmethod
     def exit(obj):
         for i in range(3):
             obj.images[4][i].opacify(1)
     @staticmethod
     def draw(obj):
-        global jumpcount
-        if jumpcount < 40:
+        if obj.jumpcount < 40:
             obj.images[4][0].draw_now(obj.x, obj.y)
             return obj.images[4][0]
-        elif jumpcount >= 40 and jumpcount <= 60:
+        elif obj.jumpcount >= 40 and obj.jumpcount <= 60:
             obj.images[4][1].clip_draw(obj.frame * 116, 0, 116, 127, obj.x, obj.y)
             return obj.images[4][1]
-        elif jumpcount > 60:
+        elif obj.jumpcount > 60:
             obj.images[4][2].draw_now(obj.x,obj.y)
             return obj.images[4][2]
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
-        global jumpcount
-        jumpcount += 2
-
-        t = jumpcount / 80
-        y = (2 * t ** 2 - 3 * t + 1) * obj.start_y + (-4 * t ** 2 + 4 * t) * obj.max_y + (2 * t ** 2 - t) * obj.end_y
-        obj.y = y
-        if jumpcount == 80:
-            jumpcount = 0
-            obj.add_event(TIME_OUT)
     @staticmethod
     def get_bb(obj):
         return obj.x - 72 , obj.y - 71.5 , obj.x + 72 , obj.y + 71.5
@@ -185,13 +165,12 @@ class Wound:
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
-        if get_time() - wound_start_time > 2.0:
+        if get_time() - wound_start_time > 1.0:
             obj.add_event(TIME_OUT)
 
     @staticmethod
     def get_bb(obj):
         return obj.x - 74, obj.y - 66, obj.x + 74, obj.y + 66
-
 
 next_state_table = {
     Walk: {DOWN_DOWN: Head  , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
@@ -222,9 +201,11 @@ class Player:
         self.max_y = 0
         self.end_y = 0
         self.jumping = False
+        self.doublejumping = False
         self.running = False
         self.blink = False
         self.now_image = self.images[0]
+        self.jumpcount = 0
     def draw(self):
         self.now_image = self.current_state.draw(self)
         if mygame.drawbb == True:
@@ -233,6 +214,7 @@ class Player:
     def update(self):
         self.current_state.update(self)
         self.run_speed_exit()
+        self.update_jump()
         if len(self.event_que) > 0:
             event = self.event_que.pop()
             if (event not in next_state_table[self.current_state]) == True:
@@ -306,3 +288,20 @@ class Player:
             self.running = False
             if self.current_state == Run:
                 self.add_event(TIME_OUT)
+    def update_jump(self):
+        if self.jumping:
+            if self.doublejumping:
+                jump_stat = 80
+            else: jump_stat = 40
+            self.jumpcount += 2
+
+            t = self.jumpcount / jump_stat
+            y = (2 * t ** 2 - 3 * t + 1) * self.start_y + (-4 * t ** 2 + 4 * t) * self.max_y + (2 * t ** 2 - t) * self.end_y
+            self.y = y
+            if self.jumpcount == jump_stat:
+                self.jumpcount = 0
+                self.jumping = False
+                self.doublejumping = False
+                if self.current_state == Jump or self.current_state == DoubleJump:
+                    self.add_event(TIME_OUT)
+
