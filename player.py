@@ -2,7 +2,7 @@
 from pico2d import *
 
 import mygame
-DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN   = range(5)
+DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN   = range(6)
 key_event_table = {
     #(SDL_KEYDOWN, SDLK_RIGHT): RIGHT,
     #(SDL_KEYDOWN, SDLK_LEFT): LEFT,
@@ -15,7 +15,7 @@ key_event_table = {
 
 
 
-class Work:
+class Walk:
     @staticmethod
     def enter(obj):
         obj.frame = 0
@@ -56,9 +56,11 @@ cool_start_time = get_time()
 class Run:
     @staticmethod
     def enter(obj):
-        global run_start_time
         obj.frame = 0
+        if obj.running == True: return
+        global run_start_time
         run_start_time = get_time()
+        obj.running = True
     @staticmethod
     def exit(obj):
         pass
@@ -68,10 +70,7 @@ class Run:
         return obj.images[2]
     @staticmethod
     def update(obj):
-        global run_start_time
         obj.frame = (obj.frame + 1) % 4
-        if get_time() - run_start_time > 1.5:
-            obj.add_event(TIME_OUT)
     @staticmethod
     def get_bb(obj):
         return obj.x - 67 , obj.y - 74 , obj.x + 67 , obj.y + 74
@@ -87,6 +86,8 @@ class Jump:
         obj.jumping = True
     @staticmethod
     def exit(obj):
+        for i in range(3):
+            obj.images[3][i].opacify(1)
         obj.jumping = False
     @staticmethod
     def draw(obj):
@@ -133,7 +134,8 @@ class DoubleJump:
         jumpcount = 0
     @staticmethod
     def exit(obj):
-        pass
+        for i in range(3):
+            obj.images[4][i].opacify(1)
     @staticmethod
     def draw(obj):
         global jumpcount
@@ -162,11 +164,11 @@ class DoubleJump:
     def get_bb(obj):
         return obj.x - 72 , obj.y - 71.5 , obj.x + 72 , obj.y + 71.5
 next_state_table = {
-    Work: {DOWN_DOWN: Head , DOWN_UP : Work , SPACE_DOWN : Run ,JUMP_DOWN : Jump},
-    Head: {DOWN_DOWN: Head, DOWN_UP: Work, SPACE_DOWN : Head , JUMP_DOWN : Jump},
-    Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Work , JUMP_DOWN : Jump},
-    Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : DoubleJump , TIME_OUT : Work},
-    DoubleJump : {DOWN_DOWN : DoubleJump , DOWN_UP : DoubleJump , SPACE_DOWN : DoubleJump , JUMP_DOWN : DoubleJump , TIME_OUT : Work}
+    Walk: {DOWN_DOWN: Head , DOWN_UP : Walk , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
+    Head: {DOWN_DOWN: Head, DOWN_UP: Walk, SPACE_DOWN : Head , JUMP_DOWN : Jump},
+    Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Walk , JUMP_DOWN : Jump},
+    Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : DoubleJump , TIME_OUT : Walk},
+    DoubleJump : {DOWN_DOWN : DoubleJump , DOWN_UP : DoubleJump , SPACE_DOWN : DoubleJump , JUMP_DOWN : DoubleJump , TIME_OUT : Walk}
 }
 opstat = 1.0
 cool_end_time = False
@@ -181,13 +183,14 @@ class Player:
         self.x = 150
         self.y = 100
         self.frame = 0
-        self.current_state = Work
+        self.current_state = Walk
         self.jumpspeed = 0.0
         self.event_que = []
         self.start_y = 0
         self.max_y = 0
         self.end_y = 0
         self.jumping = False
+        self.running = False
         self.op = False
         self.now_image = self.images[0]
     def draw(self):
@@ -196,12 +199,15 @@ class Player:
             draw_rectangle(*self.current_state.get_bb(self))
     def update(self):
         self.current_state.update(self)
+        self.run_exit()
         if len(self.event_que) > 0:
             event = self.event_que.pop()
             if self.current_state == next_state_table[self.current_state][event]:
                 return
             self.exit()
             self.current_state = next_state_table[self.current_state][event]
+            if self.running == True and self.current_state == Walk:
+                self.current_state = Run
             self.enter()
     def enter(self):
         self.current_state.enter(self)
@@ -254,3 +260,10 @@ class Player:
             if get_time() - cool_end_time > 1:
                 self.op = False
                 self.now_image.opacify(1)
+    def run_exit(self):
+        global run_start_time
+        if self.running == False:return
+        if get_time() - run_start_time > 4.5:
+            self.running = False
+            if self.current_state == Run:
+                self.add_event(TIME_OUT)

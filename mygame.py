@@ -18,7 +18,6 @@ GRASS_SPEED_MPM = (GRASS_SPEED * 1000.0 / 60.0)
 GRASS_SPEED_MPS = (GRASS_SPEED_MPM / 60.0)
 GRASS_SPEED_PPS = (GRASS_SPEED_MPS * PIXEL_PER_METER)
 
-
 frame_time = 0.0
 running = True
 timestop = False
@@ -33,9 +32,11 @@ def remove_object(o):
     for i in range(len(objects)):
         if i == 1 and playerchar.op == False:
             playerchar.cooltime_enter()
+            print("collsion")
             break
         if o in objects[i]:
             if i == 1: break
+            print("remove")
             objects[i].remove(o)
             del o
             break
@@ -82,7 +83,11 @@ def enter():
 
 
 def move_update(obj):
-    obj.x -= obj.velocity * frame_time
+    if playerchar.running == False:
+        obj.x -= obj.velocity * frame_time
+    else:
+        obj.x -= obj.velocity * frame_time * 2
+
 
 def update():
     global frame_time, current_time
@@ -92,7 +97,6 @@ def update():
         o.update()
     for o in all_objects():
         if playerchar.get_bb(o):
-            print("remove")
             remove_object(o)
     frame_time = time.time() - current_time
     current_time += frame_time
