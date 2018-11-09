@@ -12,6 +12,7 @@ medicine = None
 silver_coin = None
 obstacle_01 = None
 
+
 PIXEL_PER_METER = (10.0/ 0.3)
 GRASS_SPEED = 20.0
 GRASS_SPEED_MPM = (GRASS_SPEED * 1000.0 / 60.0)
@@ -19,19 +20,22 @@ GRASS_SPEED_MPS = (GRASS_SPEED_MPM / 60.0)
 GRASS_SPEED_PPS = (GRASS_SPEED_MPS * PIXEL_PER_METER)
 
 frame_time = 0.0
-running = True
+loop = True
 timestop = False
 drawbb =True
 stage1 = None
 sky_stage1 = None
+background = None
+background2 =None
 objects = [[],[]]
 def add_object(o,layer):
     objects[layer].append(o)
 
 def remove_object(o):
     for i in range(len(objects)):
-        if i == 1 and playerchar.op == False:
+        if i == 1 and playerchar.blink == False:
             playerchar.cooltime_enter()
+            playerchar.change_state(player.Wound)
             print("collsion")
             break
         if o in objects[i]:
@@ -64,13 +68,15 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,sky_stage1
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,sky_stage1,background1,background2
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
     stage1 = load_image("image\\stage_1.png")
     sky_stage1 = load_image("image\\stage_sky_1.png")
+    background1 = load_image("image\\stage_background_1.png")
+    background2 = load_image("image\\stage_background_2.png")
     obstacle_01 = obstacle.Obstacle()
     current_time = time.time()
     silver_coin = item.SilverCoin()
@@ -105,6 +111,7 @@ def draw():
     clear_canvas()
     sky_stage1.draw(400, 270)
     stage1.draw(400, 180)
+    background2.draw(400,450)
     for o in all_objects():
         o.draw()
     playerchar.draw()
@@ -123,7 +130,7 @@ def exit():
 def main():
     global current_time, playerchar
     enter()
-    while running:
+    while loop:
         handle_events()
         if timestop == True:
             current_time = time.time()

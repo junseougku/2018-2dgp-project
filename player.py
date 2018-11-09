@@ -2,7 +2,7 @@
 from pico2d import *
 
 import mygame
-DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN   = range(6)
+DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN   = range(5)
 key_event_table = {
     #(SDL_KEYDOWN, SDLK_RIGHT): RIGHT,
     #(SDL_KEYDOWN, SDLK_LEFT): LEFT,
@@ -37,12 +37,13 @@ class Head:
     @staticmethod
     def enter(obj):
         obj.frame = 0
+        obj.y -= 30.5
     @staticmethod
     def exit(obj):
-        pass
+        obj.y += 30.5
     @staticmethod
     def draw(obj):
-        obj.images[1].clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y - 30.5)
+        obj.images[1].clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y)
         return obj.images[1]
     @staticmethod
     def update(obj):
@@ -163,12 +164,42 @@ class DoubleJump:
     @staticmethod
     def get_bb(obj):
         return obj.x - 72 , obj.y - 71.5 , obj.x + 72 , obj.y + 71.5
+
+wound_start_time = 0.0
+
+class Wound:
+    @staticmethod
+    def enter(obj):
+        global wound_start_time
+        obj.frame = 0
+        wound_start_time = get_time()
+    @staticmethod
+    def exit(obj):
+        pass
+
+    @staticmethod
+    def draw(obj):
+        obj.images[5].clip_draw(obj.frame * 148, 0, 148, 136, obj.x, obj.y)
+        return obj.images[5]
+
+    @staticmethod
+    def update(obj):
+        obj.frame = (obj.frame + 1) % 3
+        if get_time() - wound_start_time > 2.0:
+            obj.add_event(TIME_OUT)
+
+    @staticmethod
+    def get_bb(obj):
+        return obj.x - 74, obj.y - 66, obj.x + 74, obj.y + 66
+
+
 next_state_table = {
     Walk: {DOWN_DOWN: Head , DOWN_UP : Walk , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
     Head: {DOWN_DOWN: Head, DOWN_UP: Walk, SPACE_DOWN : Head , JUMP_DOWN : Jump},
     Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Walk , JUMP_DOWN : Jump},
     Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : DoubleJump , TIME_OUT : Walk},
-    DoubleJump : {DOWN_DOWN : DoubleJump , DOWN_UP : DoubleJump , SPACE_DOWN : DoubleJump , JUMP_DOWN : DoubleJump , TIME_OUT : Walk}
+    DoubleJump : {DOWN_DOWN : DoubleJump , DOWN_UP : DoubleJump , SPACE_DOWN : DoubleJump , JUMP_DOWN : DoubleJump , TIME_OUT : Walk},
+    Wound : { TIME_OUT : Walk }
 }
 opstat = 1.0
 cool_end_time = False
@@ -179,7 +210,8 @@ class Player:
         self.images = [load_image("image\\work_player_.png"),load_image("image\\head_player_.png"),load_image("image\\run_player_.png")
                        ,[load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
                             load_image("image\\player_jump_4.png")] , [ load_image("image\\player_doublejump_1.png") , load_image("image\\doublejump_player_.png")
-                                  , load_image("image\\player_doublejump_5.png")]]
+                                  , load_image("image\\player_doublejump_5.png")]
+                       ,load_image("image\\wound_player_.png")]
         self.x = 150
         self.y = 100
         self.frame = 0
@@ -191,7 +223,7 @@ class Player:
         self.end_y = 0
         self.jumping = False
         self.running = False
-        self.op = False
+        self.blink = False
         self.now_image = self.images[0]
     def draw(self):
         self.now_image = self.current_state.draw(self)
@@ -199,7 +231,7 @@ class Player:
             draw_rectangle(*self.current_state.get_bb(self))
     def update(self):
         self.current_state.update(self)
-        self.run_exit()
+        self.run_speed_exit()
         if len(self.event_que) > 0:
             event = self.event_que.pop()
             if self.current_state == next_state_table[self.current_state][event]:
@@ -209,6 +241,10 @@ class Player:
             if self.running == True and self.current_state == Walk:
                 self.current_state = Run
             self.enter()
+    def change_state(self,state):
+        self.exit()
+        self.current_state = state
+        self.enter()
     def enter(self):
         self.current_state.enter(self)
     def exit(self):
@@ -244,12 +280,12 @@ class Player:
         global cool_end_time
         cool_start_time = get_time()
         cool_end_time = get_time()
-        self.op = True
+        self.blink = True
     def cooltime(self):
         global cool_start_time
         global opstat
         global cool_end_time
-        if self.op == True and get_time() - cool_start_time > 0.1:
+        if self.blink and get_time() - cool_start_time > 0.1:
             cool_start_time = get_time()
             if opstat == 1.0:
                 opstat = 0.5
@@ -258,9 +294,9 @@ class Player:
                 opstat = 1.0
                 self.now_image.opacify(opstat)
             if get_time() - cool_end_time > 1:
-                self.op = False
+                self.blink = False
                 self.now_image.opacify(1)
-    def run_exit(self):
+    def run_speed_exit(self):
         global run_start_time
         if self.running == False:return
         if get_time() - run_start_time > 4.5:
