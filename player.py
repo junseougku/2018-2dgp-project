@@ -194,11 +194,11 @@ class Wound:
 
 
 next_state_table = {
-    Walk: {DOWN_DOWN: Head , DOWN_UP : Walk , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
+    Walk: {DOWN_DOWN: Head  , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
     Head: {DOWN_DOWN: Head, DOWN_UP: Walk, SPACE_DOWN : Head , JUMP_DOWN : Jump},
-    Run: {DOWN_DOWN: Head , DOWN_UP : Run, SPACE_DOWN : Run , TIME_OUT : Walk , JUMP_DOWN : Jump},
-    Jump : {DOWN_DOWN : Jump, DOWN_UP : Jump , SPACE_DOWN : Jump , JUMP_DOWN : DoubleJump , TIME_OUT : Walk},
-    DoubleJump : {DOWN_DOWN : DoubleJump , DOWN_UP : DoubleJump , SPACE_DOWN : DoubleJump , JUMP_DOWN : DoubleJump , TIME_OUT : Walk},
+    Run: {DOWN_DOWN: Head ,  TIME_OUT : Walk , JUMP_DOWN : Jump},
+    Jump : {  JUMP_DOWN : DoubleJump , TIME_OUT : Walk},
+    DoubleJump : {  TIME_OUT : Walk},
     Wound : { TIME_OUT : Walk }
 }
 opstat = 1.0
@@ -229,11 +229,14 @@ class Player:
         self.now_image = self.current_state.draw(self)
         if mygame.drawbb == True:
             draw_rectangle(*self.current_state.get_bb(self))
+
     def update(self):
         self.current_state.update(self)
         self.run_speed_exit()
         if len(self.event_que) > 0:
             event = self.event_que.pop()
+            if (event not in next_state_table[self.current_state]) == True:
+                return
             if self.current_state == next_state_table[self.current_state][event]:
                 return
             self.exit()
