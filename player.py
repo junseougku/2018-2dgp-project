@@ -123,6 +123,7 @@ class DoubleJump:
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
         obj.doublejumping = True
+        obj.jumpcount = 0
     @staticmethod
     def exit(obj):
         for i in range(3):
