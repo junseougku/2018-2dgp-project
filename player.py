@@ -167,6 +167,8 @@ class Wound:
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
         if get_time() - wound_start_time > 1.0:
+            obj.blink = False
+            obj.now_image.opacify(1)
             obj.add_event(TIME_OUT)
 
     @staticmethod
@@ -279,9 +281,6 @@ class Player:
             elif opstat == 0.5:
                 opstat = 1.0
                 self.now_image.opacify(opstat)
-            if get_time() - cool_end_time > 1:
-                self.blink = False
-                self.now_image.opacify(1)
     def run_speed_exit(self):
         global run_start_time
         if self.running == False:return

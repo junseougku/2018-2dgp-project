@@ -87,15 +87,20 @@ def exit_pause():
             timestop_exit = False
             timestop = False
         elif get_time() - exit_pause_time > 2.0:
-            count_pause_time_image.clip_draw(190, 0, 95, 114, playerchar.x, playerchar.y + 100)
+            clear_canvas()
+            draw()
+            count_pause_time_image.clip_draw(190, 0, 95, 114, playerchar.x+30, playerchar.y + 100)
             update_canvas()
         elif get_time() - exit_pause_time > 1.0:
-            count_pause_time_image.clip_draw(95,0,95,114,playerchar.x,playerchar.y + 100)
+            clear_canvas()
+            draw()
+            count_pause_time_image.clip_draw(95,0,95,114,playerchar.x+10,playerchar.y + 100)
             update_canvas()
         elif get_time() - exit_pause_time < 1.0:
-            count_pause_time_image.clip_draw(0, 0, 95, 114, playerchar.x, playerchar.y + 100)
+            clear_canvas()
+            draw()
+            count_pause_time_image.clip_draw(0, 0, 95, 114, playerchar.x-10, playerchar.y + 100)
             update_canvas()
-
 def init(obj,layer):
     add_object(obj,layer)
 
@@ -154,7 +159,8 @@ def static_object_draw(obj,_x,_y):
 
 #뎁스를 하다말음
 def draw():
-    clear_canvas()
+    if timestop == False:
+        clear_canvas()
     static_object_draw(sky_stage1,400,270)
     static_object_draw(stage1,400,180)
     static_object_draw(background2,400,450)
@@ -164,7 +170,8 @@ def draw():
     if drawbb == True:
         for o in all_objects():
             draw_rectangle(*o.get_bb())
-    update_canvas()
+    if timestop == False:
+        update_canvas()
 
 def exit():
     global grass_01,grass_02,playerchar,medicine
@@ -178,11 +185,11 @@ def main():
     enter()
     while loop:
         handle_events()
-        if timestop == True:
+        if timestop:
             current_time = time.time()
-            continue
-        update()
-        draw()
+        if timestop == False:
+            update()
+            draw()
         playerchar.handle_events()
         delay(0.05)
     exit()
