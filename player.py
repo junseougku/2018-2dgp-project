@@ -4,9 +4,7 @@ from pico2d import *
 import mygame
 DOWN_DOWN ,DOWN_UP,SPACE_DOWN,TIME_OUT,JUMP_DOWN   = range(5)
 key_event_table = {
-    #(SDL_KEYDOWN, SDLK_RIGHT): RIGHT,
-    #(SDL_KEYDOWN, SDLK_LEFT): LEFT,
-    #(SDL_KEYDOWN, SDLK_UP): UP,
+
     (SDL_KEYDOWN, SDLK_DOWN): DOWN_DOWN,
     (SDL_KEYUP,SDLK_DOWN) : DOWN_UP,
     (SDL_KEYDOWN,SDLK_SPACE) : SPACE_DOWN,

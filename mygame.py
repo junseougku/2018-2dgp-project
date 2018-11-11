@@ -26,6 +26,11 @@ timestop_exit = False
 drawbb =True
 
 
+item_table = {
+    item.SilverCoin : 5,
+    item.Medicine : 10
+}
+
 objects = [[],[]]       #움직이고 없어질수 있는 객체들
 def add_object(o,layer):
     objects[layer].append(o)
@@ -40,6 +45,10 @@ def remove_object(o):
         if o in objects[i]:
             if i == 1: break
             print("remove")
+
+            if type(o) in item_table:
+                eat_item_score = item_table[type(o)]
+                static_objects_group.change_score(eat_item_score)
             objects[i].remove(o)
             del o
             break

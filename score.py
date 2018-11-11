@@ -9,5 +9,5 @@ class score:
     def draw(self):
         self.font.draw(self.x , self.y , 'score : %3.0f'% self.score, (255, 0, 255))
 
-    def update(self):
-        pass
+    def update(self,_point):
+        self.score += _point

@@ -50,3 +50,6 @@ def draw():
     static_object_draw(background2, 400, 450)
     hp_ui.draw()
     score_ui.draw()
+
+def change_score(_point):
+    score_ui.update(_point)
