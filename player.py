@@ -166,7 +166,7 @@ class Wound:
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
-        if get_time() - wound_start_time > 1.0:
+        if get_time() - wound_start_time > 1.2:
             obj.blink = False
             obj.now_image.opacify(1)
             obj.add_event(TIME_OUT)
@@ -209,6 +209,7 @@ class Player:
         self.blink = False
         self.now_image = self.images[0]
         self.jumpcount = 0
+
     def draw(self):
         self.now_image = self.current_state.draw(self)
         if mygame.drawbb == True:

@@ -4,7 +4,7 @@ import player
 import grass
 import item
 import obstacle
-
+import static_objects_group
 playerchar = None
 grass_01 = None
 grass_02 = None
@@ -24,18 +24,11 @@ loop = True
 timestop = False
 timestop_exit = False
 drawbb =True
-stage1 = None
-sky_stage1 = None
-background = None
-background2 =None
-count_pause_time_image = None
+
+
 objects = [[],[]]       #움직이고 없어질수 있는 객체들
-static_objects = [ [],[]]       #ui 배경등 의미가없는 객체들
 def add_object(o,layer):
     objects[layer].append(o)
-
-def add_static_object(o,layer):
-    static_objects[layer].append(o)
 
 def remove_object(o):
     for i in range(len(objects)):
@@ -54,18 +47,11 @@ def clear():
     for o in all_objects():
         del o
     objects.clear()
-    for o in all_static_objects():
-        del o
-    static_objects.clear()
+    static_objects_group.clear()
 
 def all_objects():
     for i in range(len(objects)):
         for o in objects[i]:
-            yield o
-
-def all_static_objects():
-    for i in range(len(static_objects)):
-        for o in static_objects[i]:
             yield o
 
 exit_pause_time = get_time()
@@ -89,23 +75,20 @@ def exit_pause():
         elif get_time() - exit_pause_time > 2.0:
             clear_canvas()
             draw()
-            count_pause_time_image.clip_draw(190, 0, 95, 114, playerchar.x+30, playerchar.y + 100)
+            static_objects_group.count_pause_time_image.clip_draw(190, 0, 95, 114, playerchar.x+30, playerchar.y + 100)
             update_canvas()
         elif get_time() - exit_pause_time > 1.0:
             clear_canvas()
             draw()
-            count_pause_time_image.clip_draw(95,0,95,114,playerchar.x+10,playerchar.y + 100)
+            static_objects_group.count_pause_time_image.clip_draw(95,0,95,114,playerchar.x+10,playerchar.y + 100)
             update_canvas()
         elif get_time() - exit_pause_time < 1.0:
             clear_canvas()
             draw()
-            count_pause_time_image.clip_draw(0, 0, 95, 114, playerchar.x-10, playerchar.y + 100)
+            static_objects_group.count_pause_time_image.clip_draw(0, 0, 95, 114, playerchar.x-10, playerchar.y + 100)
             update_canvas()
 def init(obj,layer):
     add_object(obj,layer)
-
-def static_object_init(obj,layer):
-    add_static_object(obj,layer)
 
 def enter():
     global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,sky_stage1,background1,background2
@@ -114,11 +97,6 @@ def enter():
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
-    stage1 = load_image("image\\stage_1.png")
-    sky_stage1 = load_image("image\\stage_sky_1.png")
-    background1 = load_image("image\\stage_background_1.png")
-    background2 = load_image("image\\stage_background_2.png")
-    count_pause_time_image = load_image("image\\count_pause_time_.png")
     obstacle_01 = obstacle.Obstacle()
     current_time = time.time()
     silver_coin = item.SilverCoin()
@@ -127,10 +105,7 @@ def enter():
     init(grass_02,0)
     init(silver_coin,0)
     add_object(obstacle_01,1)
-    static_object_init(stage1,0)
-    static_object_init(background1,0)
-    static_object_init(background2,0)
-    static_object_init(count_pause_time_image,1)
+    static_objects_group.enter()
 
 
 def move_update(obj):
@@ -154,16 +129,11 @@ def update():
     frame_time = time.time() - current_time
     current_time += frame_time
 
-def static_object_draw(obj,_x,_y):
-    obj.draw(_x,_y)
-
 #뎁스를 하다말음
 def draw():
     if timestop == False:
         clear_canvas()
-    static_object_draw(sky_stage1,400,270)
-    static_object_draw(stage1,400,180)
-    static_object_draw(background2,400,450)
+    static_objects_group.draw()
     for o in all_objects():
         o.draw()
     playerchar.draw()
