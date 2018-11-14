@@ -53,10 +53,10 @@ def remove_object(o):
             del o
             break
 def clear():
+    print("aa")
     for o in all_objects():
         del o
     objects.clear()
-    static_objects_group.clear()
 
 def all_objects():
     for i in range(len(objects)):
@@ -66,12 +66,14 @@ def all_objects():
 exit_pause_time = get_time()
 
 def handle_events():
-    global timestop,exit_pause_time,timestop_exit
+    global timestop,exit_pause_time,timestop_exit,loop
     if timestop == True:
         for event in get_events():
             if event.type == SDL_KEYDOWN and event.key == SDLK_p:
                 exit_pause_time = get_time()
                 timestop_exit = True
+            if event.type == SDL_QUIT:
+                loop = False
         exit_pause()
 
 
@@ -100,8 +102,7 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,sky_stage1,background1,background2
-    global count_pause_time_image
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
@@ -113,7 +114,7 @@ def enter():
     init(grass_01,0)
     init(grass_02,0)
     init(silver_coin,0)
-    add_object(obstacle_01,1)
+    init(obstacle_01,1)
     static_objects_group.enter()
 
 
@@ -138,7 +139,7 @@ def update():
     frame_time = time.time() - current_time
     current_time += frame_time
 
-#뎁스를 하다말음
+
 def draw():
     if timestop == False:
         clear_canvas()
@@ -153,11 +154,14 @@ def draw():
         update_canvas()
 
 def exit():
-    global grass_01,grass_02,playerchar,medicine
+    global playerchar
     del(playerchar)
     for o in all_objects():
         del(o)
-    close_canvas()
+    for o in static_objects_group.all_static_objects():
+        del(o)
+    objects.clear()
+    static_objects_group.static_objects.clear()
 
 def main():
     global current_time, playerchar
@@ -172,5 +176,8 @@ def main():
         playerchar.handle_events()
         delay(0.05)
     exit()
+
+
+
 if __name__  == '__main__':
     main()

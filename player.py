@@ -242,15 +242,17 @@ class Player:
     def handle_events(self):
         events = get_events()
         for event in events:
-            if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-                mygame.running = False
             if event.type == SDL_KEYDOWN and event.key == SDLK_p:
                 mygame.timestop = True
             if event.type == SDL_KEYDOWN and event.key == SDLK_o:
                 if mygame.drawbb == False:
                     mygame.drawbb = True
                 else: mygame.drawbb = False
-            if (event.type, event.key) in key_event_table:
+            if event.type == SDL_QUIT:
+                mygame.loop = False
+            elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+                mygame.loop = False
+            elif (event.type, event.key) in key_event_table:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)
     def get_bb(self,obj):

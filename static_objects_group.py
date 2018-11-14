@@ -42,6 +42,8 @@ def enter():
     static_object_init(count_pause_time_image, 1)
     hp_ui = HP.HP()
     score_ui = score.score()
+    static_object_init(hp_ui,1)
+    static_object_init(score_ui,1)
 
 def draw():
     global hp_ui,score_ui
