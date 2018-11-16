@@ -23,7 +23,7 @@ frame_time = 0.0
 loop = True
 timestop = False
 timestop_exit = False
-drawbb =True
+drawbb =False           #임시
 
 
 item_table = {

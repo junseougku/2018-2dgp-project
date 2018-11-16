@@ -17,6 +17,7 @@ class Walk:
     @staticmethod
     def enter(obj):
         obj.frame = 0
+        obj.bb_count = 2
     @staticmethod
     def exit(obj):
         pass
@@ -27,9 +28,19 @@ class Walk:
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 4
+
+    @staticmethod
+    def collider(obj):
+        pass
+
     @staticmethod
     def get_bb(obj):
-        return obj.x - 64.5,obj.y - 73, obj.x + 64.5,obj.y + 73
+        return [(obj.x - 54,obj.y+(obj.y/3) - 30, obj.x + 54,obj.y+(obj.y/3) + 30),(obj.x+15 - 48,obj.y-(obj.y/3) - 30, obj.x + 48,obj.y-(obj.y/3) + 30)]
+
+    @staticmethod
+    def draw_bb(obj):
+        draw_rectangle(obj.x - 54,obj.y+(obj.y/3) - 30, obj.x + 54,obj.y+(obj.y/3) + 30)
+        draw_rectangle(obj.x+15 - 48,obj.y-(obj.y/3) - 30, obj.x + 48,obj.y-(obj.y/3) + 30)
 
 class Head:
     @staticmethod
@@ -71,6 +82,9 @@ class Run:
     def update(obj):
         obj.frame = (obj.frame + 1) % 4
     @staticmethod
+    def collider(obj):
+        pass
+    @staticmethod
     def get_bb(obj):
         return obj.x - 67 , obj.y - 74 , obj.x + 67 , obj.y + 74
 
@@ -83,7 +97,7 @@ class Jump:
         obj.frame = 0
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
-        obj.end_y = obj.y
+        obj.end_y = 100
         obj.jumping = True
     @staticmethod
     def exit(obj):
@@ -117,7 +131,7 @@ class DoubleJump:
     @staticmethod
     def enter(obj):
         obj.frame = 0
-        obj.end_y = obj.start_y
+        obj.end_y = 100
         obj.start_y = obj.y
         obj.max_y = obj.y + 150
         obj.doublejumping = True
@@ -207,11 +221,12 @@ class Player:
         self.blink = False
         self.now_image = self.images[0]
         self.jumpcount = 0
-
+        self.bb_count = 0
     def draw(self):
         self.now_image = self.current_state.draw(self)
-        if mygame.drawbb == True:
-            draw_rectangle(*self.current_state.get_bb(self))
+       # if mygame.drawbb == True:
+        #    draw_rectangle(*self.current_state.get_bb(self))
+        self.draw_bb()
 
     def update(self):
         self.current_state.update(self)
@@ -256,14 +271,14 @@ class Player:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)
     def get_bb(self,obj):
-        left_a,bottom_a,right_a,top_a = self.current_state.get_bb(self)
         left_b,bottom_b,right_b,top_b = obj.get_bb()
-        if left_a > right_b : return False
-        if right_a < left_b : return False
-        if top_a < bottom_b : return False
-        if bottom_a > top_b : return False
+        for (_a_l,_a_b,_a_r,_a_t) in self.current_state.get_bb(self):
+            if _a_l > right_b : return False
+            if _a_r < left_b : return False
+            if _a_t < bottom_b : return False
+            if _a_b > top_b : return False
 
-        return True
+            return True
     def cooltime_enter(self):
         global cool_start_time
         global cool_end_time
@@ -305,4 +320,6 @@ class Player:
                 self.doublejumping = False
                 if self.current_state == Jump or self.current_state == DoubleJump:
                     self.add_event(TIME_OUT)
+    def draw_bb(self):
+        self.current_state.draw_bb(self)
 
