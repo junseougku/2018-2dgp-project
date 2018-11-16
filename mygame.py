@@ -14,7 +14,7 @@ obstacle_01 = None
 
 
 PIXEL_PER_METER = (10.0/ 0.3)
-GRASS_SPEED = 20.0
+GRASS_SPEED = 40.0
 GRASS_SPEED_MPM = (GRASS_SPEED * 1000.0 / 60.0)
 GRASS_SPEED_MPS = (GRASS_SPEED_MPM / 60.0)
 GRASS_SPEED_PPS = (GRASS_SPEED_MPS * PIXEL_PER_METER)
@@ -24,8 +24,8 @@ loop = True
 timestop = False
 timestop_exit = False
 drawbb =True
-
-
+slow_start = False
+slow_speed_start = get_time()
 item_table = {
     item.SilverCoin : 5,
     item.Medicine : 10
@@ -38,8 +38,11 @@ def add_object(o,layer):
 def remove_object(o):
     for i in range(len(objects)):
         if i == 1 and playerchar.blink == False:
+            global slow_speed_start,slow_start
             playerchar.cooltime_enter()
             playerchar.change_state(player.Wound)
+            slow_speed_start = get_time()
+            slow_start = True
             print("collsion")
             break
         if o in objects[i]:
@@ -111,15 +114,26 @@ def enter():
     current_time = time.time()
     silver_coin = item.SilverCoin()
     init(medicine,0)
-    init(grass_01,0)
-    init(grass_02,0)
+    init(grass_01,1)
+    init(grass_02,1)
     init(silver_coin,0)
     init(obstacle_01,1)
     static_objects_group.enter()
 
-
 def move_update(obj):
-    if playerchar.running == False:
+    global slow_start
+    if slow_start == True:        #충돌시 객체들은 느려짐
+        global slow_speed_start
+        if get_time() - slow_speed_start > 0.5:
+            slow_start = False
+            return
+        elif get_time() - slow_speed_start < 0.2:
+            obj.x -= obj.velocity * frame_time / 4
+        elif get_time() - slow_speed_start < 0.4:
+            obj.x -= obj.velocity * frame_time / 3
+        elif get_time() - slow_speed_start < 0.5:
+            obj.x -= obj.velocity * frame_time / 2
+    elif playerchar.running == False:
         obj.x -= obj.velocity * frame_time
     else:
         obj.x -= obj.velocity * frame_time * 2
@@ -174,7 +188,7 @@ def main():
             update()
             draw()
         playerchar.handle_events()
-        delay(0.05)
+        delay(0.03)
     exit()
 
 
