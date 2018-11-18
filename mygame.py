@@ -5,13 +5,15 @@ import grass
 import item
 import obstacle_pin
 import static_objects_group
+
+import stage01
 playerchar = None
 grass_01 = None
 grass_02 = None
 medicine = None
 silver_coin = None
 obstacle_01 = None
-
+stage1_sequence = None
 
 PIXEL_PER_METER = (10.0/ 0.3)
 GRASS_SPEED = 40.0
@@ -34,6 +36,9 @@ item_table = {
 objects = [[],[]]       #움직이고 없어질수 있는 객체들
 def add_object(o,layer):
     objects[layer].append(o)
+
+def collision_enemy():
+    pass
 
 def remove_object(o):
     for i in range(len(objects)):
@@ -105,7 +110,7 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,stage1_sequence
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
@@ -119,6 +124,8 @@ def enter():
     init(silver_coin,0)
     init(obstacle_01,1)
     static_objects_group.enter()
+
+    stage1_sequence = stage01.Stage01()
 
 def move_update(obj):
     global slow_start
@@ -142,8 +149,6 @@ def move_update(obj):
     else:
         obj.x -= obj.velocity * frame_time * 2
 
-def depth_machine():
-    pass
 
 def update():
     global frame_time, current_time
@@ -154,6 +159,8 @@ def update():
     for o in all_objects():
         if playerchar.get_bb(o):
             remove_object(o)
+    stage1_sequence.update()
+    stage1_sequence.collision(playerchar)
     frame_time = time.time() - current_time
     current_time += frame_time
 
@@ -168,6 +175,7 @@ def draw():
     if drawbb == True:
         for o in all_objects():
             draw_rectangle(*o.get_bb())
+    stage1_sequence.draw()
     if timestop == False:
         update_canvas()
 
@@ -186,6 +194,7 @@ def main():
     enter()
     while loop:
         handle_events()
+        stage1_sequence.do()
         if timestop:
             current_time = time.time()
         if timestop == False:
