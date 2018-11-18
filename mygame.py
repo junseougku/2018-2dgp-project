@@ -11,7 +11,7 @@ playerchar = None
 grass_01 = None
 grass_02 = None
 medicine = None
-silver_coin = None
+coin = None
 obstacle_ = None
 stage1_sequence = None
 
@@ -29,7 +29,7 @@ drawbb =True
 slow_start = False
 slow_speed_start = get_time()
 item_table = {
-    item.SilverCoin : 5,
+    item.Coin : 0,
     item.Medicine : 10
 }
 
@@ -55,7 +55,9 @@ def remove_object(o):
             print("remove")
 
             if type(o) in item_table:
-                eat_item_score = item_table[type(o)]
+                if type(o) == item.Coin:
+                    eat_item_score = o.get_score()
+                else : eat_item_score = item_table[type(o)]
                 static_objects_group.change_score(eat_item_score)
             objects[i].remove(o)
             del o
@@ -110,18 +112,18 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_,stage1_sequence
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,coin,obstacle_,stage1_sequence
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
-    grass_02 = grass.Grass(1293)
+    grass_02 = grass.Grass(1231)
     medicine = item.Medicine()
     obstacle_ = obstacle.Obstacle_line()
     current_time = time.time()
-    silver_coin = item.SilverCoin()
+    coin = item.Coin()
     init(medicine,0)
     init(grass_01,1)
     init(grass_02,1)
-    init(silver_coin,0)
+    init(coin,0)
     init(obstacle_,1)
     static_objects_group.enter()
 
