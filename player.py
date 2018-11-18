@@ -59,7 +59,12 @@ class Head:
         obj.frame = (obj.frame + 1) % 2
     @staticmethod
     def get_bb(obj):
-        return obj.x - 92 , obj.y - 42.5 , obj.x + 92 , obj.y + 42.5
+        return [(obj.x - 82, obj.y - 42.5, obj.x + 82, obj.y + 27.5)]
+
+    @staticmethod
+    def draw_bb(obj):
+        draw_rectangle( obj.x - 82, obj.y - 42.5, obj.x + 82, obj.y + 27.5)
+
 
 run_start_time = get_time()
 cool_start_time = get_time()
@@ -86,7 +91,12 @@ class Run:
         pass
     @staticmethod
     def get_bb(obj):
-        return obj.x - 67 , obj.y - 74 , obj.x + 67 , obj.y + 74
+        return [(obj.x - 47 , obj.y+22 - 52 , obj.x + 42 , obj.y+22 + 42),
+                (obj.x-10 - 47, obj.y-22 - 42, obj.x + 37, obj.y-22 + 32)]
+    @staticmethod
+    def draw_bb(obj):
+        draw_rectangle(obj.x - 47 , obj.y+22 - 52 , obj.x + 42 , obj.y+22 + 42)
+        draw_rectangle(obj.x-10 - 47, obj.y-22 - 42, obj.x + 37, obj.y-22 + 32)
 
 jump_stat = 0
 class Jump:
@@ -120,11 +130,21 @@ class Jump:
     @staticmethod
     def get_bb(obj):
         if obj.jumpcount < 10:
-            return obj.x - 51.5 , obj.y - 87 , obj.x + 51.5 , obj.y + 87
+            return [(obj.x - 31.5 , obj.y - 67 , obj.x + 31.5 , obj.y + 47)]
         elif obj.jumpcount >= 10 and obj.jumpcount <= 20:
-            return obj.x - 66 , obj.y - 68 , obj.x + 66 , obj.y + 68
+            return [(obj.x - 46 , obj.y - 53 , obj.x + 46 , obj.y + 48)]
         elif obj.jumpcount > 20:
-            return obj.x - 60.5 , obj.y - 74 , obj.x + 60.5 , obj.y + 74
+            return [(obj.x - 40.5 , obj.y - 59 , obj.x + 40.5 , obj.y + 44)]
+
+    @staticmethod
+    def draw_bb(obj):
+        if obj.jumpcount < 10:
+            draw_rectangle( obj.x - 31.5 , obj.y - 67 , obj.x + 31.5 , obj.y + 47)
+        elif obj.jumpcount >= 10 and obj.jumpcount <= 20:
+            draw_rectangle (obj.x - 46 , obj.y - 53 , obj.x + 46 , obj.y + 48)
+        elif obj.jumpcount > 20:
+            draw_rectangle (obj.x - 40.5 , obj.y - 59 , obj.x + 40.5 , obj.y + 44)
+
 jumpcount = 0
 
 class DoubleJump:
@@ -154,10 +174,25 @@ class DoubleJump:
     @staticmethod
     def update(obj):
         obj.frame = (obj.frame + 1) % 3
+
     @staticmethod
     def get_bb(obj):
-        return obj.x - 72 , obj.y - 71.5 , obj.x + 72 , obj.y + 71.5
+        if obj.jumpcount < 40:
+            return [(obj.x - 57 , obj.y+20 - 21.5 , obj.x + 57 , obj.y+20 + 41.5),(obj.x+20 -37,obj.y-30 -21.5,obj.x+20+32 , obj.y -30 + 41.5)]
+        elif obj.jumpcount >= 40 and obj.jumpcount <= 60:
+            return [(obj.x - 52, obj.y - 51.5, obj.x + 52, obj.y + 51.5)]
+        elif obj.jumpcount > 60:
+            return [(obj.x - 47, obj.y - 61.5, obj.x + 47, obj.y + 41.5)]
 
+    @staticmethod
+    def draw_bb(obj):
+        if obj.jumpcount < 40:
+            draw_rectangle(obj.x - 57 , obj.y+20 - 21.5 , obj.x + 57 , obj.y+20 + 41.5)
+            draw_rectangle(obj.x+20 -37,obj.y-30 -21.5,obj.x+20+32 , obj.y -30 + 41.5)
+        elif obj.jumpcount >= 40 and obj.jumpcount <= 60:
+            draw_rectangle(obj.x - 52, obj.y - 51.5, obj.x + 52, obj.y + 51.5)
+        elif obj.jumpcount > 60:
+            draw_rectangle(obj.x - 47, obj.y - 61.5, obj.x + 47, obj.y + 41.5)
 wound_start_time = 0.0
 
 class Wound:
@@ -185,7 +220,11 @@ class Wound:
 
     @staticmethod
     def get_bb(obj):
-        return obj.x - 74, obj.y - 66, obj.x + 74, obj.y + 66
+        return [(0,0,0,0)]
+
+    @staticmethod
+    def draw_bb(obj):
+        draw_rectangle(obj.x - 74, obj.y - 66, obj.x + 74, obj.y + 66)
 
 next_state_table = {
     Walk: {DOWN_DOWN: Head  , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
@@ -322,4 +361,3 @@ class Player:
                     self.add_event(TIME_OUT)
     def draw_bb(self):
         self.current_state.draw_bb(self)
-

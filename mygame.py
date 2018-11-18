@@ -3,7 +3,7 @@ import time
 import player
 import grass
 import item
-import obstacle
+import obstacle_pin
 import static_objects_group
 playerchar = None
 grass_01 = None
@@ -110,7 +110,7 @@ def enter():
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
-    obstacle_01 = obstacle.Obstacle()
+    obstacle_01 = obstacle_pin.Obstacle_Pin()
     current_time = time.time()
     silver_coin = item.SilverCoin()
     init(medicine,0)
@@ -127,7 +127,11 @@ def move_update(obj):
         if get_time() - slow_speed_start > 0.5:
             slow_start = False
             return
+        elif get_time() - slow_speed_start < 0.1:
+            obj.x -= obj.velocity * frame_time / 2
         elif get_time() - slow_speed_start < 0.2:
+            obj.x -= obj.velocity * frame_time / 3
+        elif get_time() - slow_speed_start < 0.3:
             obj.x -= obj.velocity * frame_time / 4
         elif get_time() - slow_speed_start < 0.4:
             obj.x -= obj.velocity * frame_time / 3
