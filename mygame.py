@@ -4,6 +4,7 @@ import player
 import grass
 import item
 import obstacle_pin
+import obstacle_fork
 import static_objects_group
 
 import stage01
@@ -13,6 +14,7 @@ grass_02 = None
 medicine = None
 silver_coin = None
 obstacle_01 = None
+obstacle_02 = None
 stage1_sequence = None
 
 PIXEL_PER_METER = (10.0/ 0.3)
@@ -110,12 +112,13 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,stage1_sequence
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,stage1_sequence,obstacle_02
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
     obstacle_01 = obstacle_pin.Obstacle_Pin()
+    obstacle_02 = obstacle_fork.Obstacle_Fork()
     current_time = time.time()
     silver_coin = item.SilverCoin()
     init(medicine,0)
@@ -123,6 +126,7 @@ def enter():
     init(grass_02,1)
     init(silver_coin,0)
     init(obstacle_01,1)
+    init(obstacle_02,1)
     static_objects_group.enter()
 
     stage1_sequence = stage01.Stage01()
@@ -172,10 +176,10 @@ def draw():
     for o in all_objects():
         o.draw()
     playerchar.draw()
+    stage1_sequence.draw()
     if drawbb == True:
         for o in all_objects():
             draw_rectangle(*o.get_bb())
-    stage1_sequence.draw()
     if timestop == False:
         update_canvas()
 
@@ -201,7 +205,7 @@ def main():
             update()
             draw()
         playerchar.handle_events()
-        delay(0.03)
+        delay(0.04)
     exit()
 
 
