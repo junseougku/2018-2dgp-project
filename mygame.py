@@ -3,8 +3,7 @@ import time
 import player
 import grass
 import item
-import obstacle_pin
-import obstacle_fork
+import obstacle
 import static_objects_group
 
 import stage01
@@ -13,8 +12,7 @@ grass_01 = None
 grass_02 = None
 medicine = None
 silver_coin = None
-obstacle_01 = None
-obstacle_02 = None
+obstacle_ = None
 stage1_sequence = None
 
 PIXEL_PER_METER = (10.0/ 0.3)
@@ -112,21 +110,19 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_01,stage1_sequence,obstacle_02
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,silver_coin,obstacle_,stage1_sequence
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(1293)
     medicine = item.Medicine()
-    obstacle_01 = obstacle_pin.Obstacle_Pin()
-    obstacle_02 = obstacle_fork.Obstacle_Fork()
+    obstacle_ = obstacle.Obstacle_line()
     current_time = time.time()
     silver_coin = item.SilverCoin()
     init(medicine,0)
     init(grass_01,1)
     init(grass_02,1)
     init(silver_coin,0)
-    init(obstacle_01,1)
-    init(obstacle_02,1)
+    init(obstacle_,1)
     static_objects_group.enter()
 
     stage1_sequence = stage01.Stage01()

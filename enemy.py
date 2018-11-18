@@ -48,7 +48,7 @@ class Enemy:
         self.y = 200
         self.frame = 0
         self.images = [load_image("image\\enemy_.png"),load_image("image\\enemy_death_.png")]
-        self.velocity = mygame.GRASS_SPEED_PPS
+        self.velocity = mygame.GRASS_SPEED_PPS * 1.5
         self.active = False
         self.current_state = Dead
     def enter(self):
