@@ -55,7 +55,6 @@ class Enemy:
         self.current_state.enter(self)
     def draw(self):
         self.current_state.draw(self)
-        draw_rectangle(*self.current_state.get_bb(self))
     def update(self):
         self.current_state.update(self)
         mygame.move_update(self)

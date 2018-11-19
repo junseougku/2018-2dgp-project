@@ -5,7 +5,7 @@ import grass
 import item
 import obstacle
 import static_objects_group
-
+import effect
 import stage01
 playerchar = None
 grass_01 = None
@@ -32,6 +32,7 @@ item_table = {
     item.Coin : 0,
     item.Medicine : 10
 }
+eat_effect = effect.Effect()
 
 objects = [[],[]]       #움직이고 없어질수 있는 객체들
 def add_object(o,layer):
@@ -53,7 +54,7 @@ def remove_object(o):
         if o in objects[i]:
             if i == 1: break
             print("remove")
-
+            eat_effect.enter(playerchar.x,playerchar.y)
             if type(o) in item_table:
                 if type(o) == item.Coin:
                     eat_item_score = o.get_score()
@@ -163,6 +164,7 @@ def update():
             remove_object(o)
     stage1_sequence.update()
     stage1_sequence.collision(playerchar)
+    eat_effect.update()
     frame_time = time.time() - current_time
     current_time += frame_time
 
@@ -175,9 +177,12 @@ def draw():
         o.draw()
     playerchar.draw()
     stage1_sequence.draw()
+    eat_effect.draw()
     if drawbb == True:
         for o in all_objects():
             draw_rectangle(*o.get_bb())
+        stage1_sequence.draw_bb()
+        playerchar.draw_bb()
     if timestop == False:
         update_canvas()
 

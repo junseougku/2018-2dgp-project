@@ -265,7 +265,7 @@ class Player:
         self.now_image = self.current_state.draw(self)
        # if mygame.drawbb == True:
         #    draw_rectangle(*self.current_state.get_bb(self))
-        self.draw_bb()
+        #self.draw_bb()
 
     def update(self):
         self.current_state.update(self)

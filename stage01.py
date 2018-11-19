@@ -19,7 +19,9 @@ class Stage01 :
     def draw(self):
         if self.basic_enemy.active:
             self.basic_enemy.draw()
-
+    def draw_bb(self):
+        if self.basic_enemy.active:
+            draw_rectangle(*self.basic_enemy.get_bb())
     def update(self):
         if self.basic_enemy.active:
             self.basic_enemy.update()
