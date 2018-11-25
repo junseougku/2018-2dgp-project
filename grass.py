@@ -14,7 +14,7 @@ class Grass:
     def update(self):
         mygame.move_update(self)
         if self.x < -431:
-            self.x = 780+431
+            self.x = 800+431
     def get_bb(self):
         return 0,0,0,0
 

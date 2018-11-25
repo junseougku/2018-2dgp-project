@@ -7,6 +7,7 @@ import random
 class Obstacle_line:
     def __init__(self):
         self.choice = 0
+        #self.image = load_image("C:\\2DGP\\2018-2dgp-project\\image\\Attack.png")
         self.fork = obstacle_fork.Obstacle_Fork()
         self.pin = obstacle_pin.Obstacle_Pin()
         #self.fork.set_active(False)
@@ -25,6 +26,7 @@ class Obstacle_line:
     def draw(self):
         self.fork.draw()
         self.pin.draw()
+        #self.image.clip_draw(0,0,526,513,600,250)
     def get_bb(self):
         if self.choice == 2:
             return self.fork.get_bb()

@@ -18,6 +18,7 @@ class Walk:
     def enter(obj):
         obj.frame = 0
         obj.bb_count = 2
+        obj.now_image.opacify(1)
     @staticmethod
     def exit(obj):
         pass
@@ -226,13 +227,31 @@ class Wound:
     def draw_bb(obj):
         draw_rectangle(obj.x - 74, obj.y - 66, obj.x + 74, obj.y + 66)
 
+class Death:
+    @staticmethod
+    def enter(obj):
+        obj.frame = 0
+    @staticmethod
+    def exit(obj):
+        pass
+    @staticmethod
+    def update(obj):
+        obj.frame = (obj.frame + 1) % 3
+    @staticmethod
+    def draw(obj):
+        if obj.frame <= 3:
+            obj.images[5].clip_draw(obj.frame * 148, 0, 148, 136, obj.x, obj.y)
+        else :
+            obj.images[6].clip_draw((obj.frame -3) * 199, 0, 199, 100, obj.x, obj.y)
+
 next_state_table = {
     Walk: {DOWN_DOWN: Head  , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
     Head: {DOWN_DOWN: Head, DOWN_UP: Walk, SPACE_DOWN : Head , JUMP_DOWN : Jump},
     Run: {DOWN_DOWN: Head ,  TIME_OUT : Walk , JUMP_DOWN : Jump},
     Jump : {  JUMP_DOWN : DoubleJump , TIME_OUT : Walk},
     DoubleJump : {  TIME_OUT : Walk},
-    Wound : { TIME_OUT : Walk }
+    Wound : { TIME_OUT : Walk },
+    Death : { TIME_OUT : Walk}
 }
 opstat = 1.0
 cool_end_time = False
@@ -244,7 +263,7 @@ class Player:
                        ,[load_image("image\\player_jump_1.png"), load_image("image\\jump_player_.png"),
                             load_image("image\\player_jump_4.png")] , [ load_image("image\\player_doublejump_1.png") , load_image("image\\doublejump_player_.png")
                                   , load_image("image\\player_doublejump_5.png")]
-                       ,load_image("image\\wound_player_.png")]
+                       ,load_image("image\\wound_player_.png"), load_image("image\\death_player_.png")]
         self.x = 150
         self.y = 100
         self.frame = 0

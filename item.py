@@ -22,28 +22,46 @@ class Coin:
         self.frame = 0
         self.type = random.randint(0,1)
         self.coin_image = coin_list[self.type]
-        self.x = 650
-        self.y = 250
+        self.x = 900
+        self.y = 450
         self.velocity = mygame.GRASS_SPEED_PPS
+        self.active = False
+
+    def enter(self):
+        self.y = random.randint(2,5) * 100
+        self.x = 900
     def draw(self):
-        if self.type == 0:
-            self.coin_image.clip_draw(self.frame * 48,0,48,48,self.x,self.y)
-        elif self.type == 1:
-            self.coin_image.clip_draw(self.frame * 58,0,58,59,self.x,self.y)
+        if self.active :
+            if self.type == 0:
+                self.coin_image.clip_draw(self.frame * 48,0,48,48,self.x,self.y)
+            elif self.type == 1:
+                self.coin_image.clip_draw(self.frame * 58,0,58,59,self.x,self.y)
 
     def update(self):
-        mygame.move_update(self)
-        if self.type == 0:
-            self.frame = (self.frame + 1) % 4
-        elif self.type == 1:
-            self.frame = (self.frame + 1) % 6
+        if self.active:
+            mygame.move_update(self)
+            if self.type == 0:
+                self.frame = (self.frame + 1) % 4
+            elif self.type == 1:
+                self.frame = (self.frame + 1) % 6
+            if self.x < -100:
+                self.active = False
+
     def get_bb(self):
-        if self.type == 0:
-            return self.x - 24, self.y -24 , self.x + 24, self.y + 24
-        elif self.type == 1:
-            return self.x - 29, self.y -29.5, self.x + 29 ,self.y + 29.5
+        if self.active:
+            if self.type == 0:
+                return self.x - 24, self.y -24 , self.x + 24, self.y + 24
+            elif self.type == 1:
+                return self.x - 29, self.y -29.5, self.x + 29 ,self.y + 29.5
+        else :
+            return 0,0,0,0
     def get_score(self):
         if self.type == 0:
             return 5
         elif self.type == 1:
             return 10
+    def change_active(self):
+        if self.active :
+            self.active = False
+        else :
+            self.active = True

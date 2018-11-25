@@ -10,8 +10,9 @@ import stage01
 playerchar = None
 grass_01 = None
 grass_02 = None
+grass_03 = None
 medicine = None
-coin = None
+coins = None
 obstacle_ = None
 stage1_sequence = None
 
@@ -54,14 +55,17 @@ def remove_object(o):
         if o in objects[i]:
             if i == 1: break
             print("remove")
-            eat_effect.enter(playerchar.x,playerchar.y)
             if type(o) in item_table:
                 if type(o) == item.Coin:
+                    if o.active == False: break
                     eat_item_score = o.get_score()
-                else : eat_item_score = item_table[type(o)]
-                static_objects_group.change_score(eat_item_score)
-            objects[i].remove(o)
-            del o
+                    o.change_active()
+                else :
+                    eat_item_score = item_table[type(o)]
+                    objects[i].remove(o)
+                    del o
+                eat_effect.enter(playerchar.x, playerchar.y)
+            static_objects_group.change_score(eat_item_score)
             break
 def clear():
     print("aa")
@@ -113,18 +117,21 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,coin,obstacle_,stage1_sequence
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,coins,obstacle_,stage1_sequence,grass_03
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
-    grass_02 = grass.Grass(1231)
+    grass_02 = grass.Grass(862)
+    grass_03 = grass.Grass(1293)
     medicine = item.Medicine()
     obstacle_ = obstacle.Obstacle_line()
     current_time = time.time()
-    coin = item.Coin()
+    coins = [item.Coin() for i in range(10)]
     init(medicine,0)
     init(grass_01,1)
     init(grass_02,1)
-    init(coin,0)
+    init(grass_03,1)
+    for i in range(10):
+        init(coins[i],0)
     init(obstacle_,1)
     static_objects_group.enter()
 
@@ -152,11 +159,17 @@ def move_update(obj):
     else:
         obj.x -= obj.velocity * frame_time * 2
 
-
+new_coin_time = get_time()
 def update():
-    global frame_time, current_time
+    global frame_time, current_time,coins,new_coin_time
     playerchar.update()
     playerchar.cooltime()
+    for i in range(10) :
+        if coins[i].active == False and get_time() - new_coin_time > 0.2:
+            new_coin_time = get_time()
+            coins[i].enter()
+            coins[i].change_active()
+            break
     for o in all_objects():
         o.update()
     for o in all_objects():
@@ -167,6 +180,7 @@ def update():
     eat_effect.update()
     frame_time = time.time() - current_time
     current_time += frame_time
+    print(eat_effect.active)
 
 
 def draw():
