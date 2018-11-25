@@ -7,6 +7,7 @@ import obstacle
 import static_objects_group
 import effect
 import stage01
+import ball
 playerchar = None
 grass_01 = None
 grass_02 = None
@@ -15,6 +16,7 @@ medicine = None
 coins = None
 obstacle_ = None
 stage1_sequence = None
+attack_ball = None
 
 PIXEL_PER_METER = (10.0/ 0.3)
 GRASS_SPEED = 40.0
@@ -117,7 +119,7 @@ def init(obj,layer):
     add_object(obj,layer)
 
 def enter():
-    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,coins,obstacle_,stage1_sequence,grass_03
+    global  playerchar, grass_01,grass_02 , medicine , stage1,current_time,coins,obstacle_,stage1_sequence,grass_03,attack_ball
     playerchar = player.Player()
     grass_01 = grass.Grass(431)
     grass_02 = grass.Grass(862)
@@ -137,6 +139,7 @@ def enter():
 
     stage1_sequence = stage01.Stage01()
 
+    attack_ball = ball.Ball()
 def move_update(obj):
     global slow_start
     if slow_start == True:        #충돌시 객체들은 느려짐
