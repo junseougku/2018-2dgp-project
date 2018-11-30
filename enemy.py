@@ -10,10 +10,10 @@ class Walk:
         obj.active = True
     @staticmethod
     def draw(obj):
-        obj.images[0].clip_draw(obj.frame * 124, 0, 124, 73, obj.x, obj.y)
+        obj.images[0].clip_draw(int(obj.frame) * 124, 0, 124, 73, obj.x, obj.y)
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 3
+        obj.frame = (obj.frame + 3 * mygame.ACTION_PER_TIME * mygame.frame_time) % 3
     @staticmethod
     def exit(obj):
         pass
@@ -27,14 +27,14 @@ class Dead:
 
     @staticmethod
     def draw(obj):
-        obj.images[1].clip_draw(obj.frame * 174,0,174,175,obj.x,obj.y)
+        obj.images[1].clip_draw(int(obj.frame) * 174,0,174,175,obj.x,obj.y)
 
     @staticmethod
     def update(obj):
         if obj.frame == 6:
             obj.active = False
             return
-        obj.frame+= 1
+            obj.frame = (obj.frame + 5 * mygame.ACTION_PER_TIME * mygame.frame_time *2) % 5
     @staticmethod
     def exit(obj):
         obj.active = False

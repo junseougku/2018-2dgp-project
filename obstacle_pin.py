@@ -29,6 +29,6 @@ class Obstacle_Pin:
         mygame.move_update(self)
     def get_bb(self):
         if self.type == 0:
-            return self.x - 16, self.y - 50, self.x + 16, self.y + 45
+            return self.x - 14, self.y - 50, self.x + 14, self.y + 45
         elif self.type == 1:
-            return self.x - 28,self.y - 84 , self.x + 28 , self.y + 84
+            return self.x - 26,self.y - 84 , self.x + 26 , self.y + 84

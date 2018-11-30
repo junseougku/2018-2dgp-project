@@ -9,9 +9,9 @@ class Medicine:
         self.y = 250
         self.velocity = mygame.GRASS_SPEED_PPS
     def draw(self):
-        self.medicine_image.clip_draw(self.frame * 85, 0, 85, 87, self.x, self.y)
+        self.medicine_image.clip_draw(int(self.frame) * 85, 0, 85, 87, self.x, self.y)
     def update(self):
-        self.frame = (self.frame + 1) % 4
+        self.frame = (self.frame + 4 * mygame.ACTION_PER_TIME * mygame.frame_time) % 4
         mygame.move_update(self)
     def get_bb(self):
         return self.x - 42.5, self.y -43.5 , self.x + 42.5, self.y + 43.5
@@ -33,17 +33,17 @@ class Coin:
     def draw(self):
         if self.active :
             if self.type == 0:
-                self.coin_image.clip_draw(self.frame * 48,0,48,48,self.x,self.y)
+                self.coin_image.clip_draw(int(self.frame) * 48,0,48,48,self.x,self.y)
             elif self.type == 1:
-                self.coin_image.clip_draw(self.frame * 58,0,58,59,self.x,self.y)
+                self.coin_image.clip_draw(int(self.frame) * 58,0,58,59,self.x,self.y)
 
     def update(self):
         if self.active:
             mygame.move_update(self)
             if self.type == 0:
-                self.frame = (self.frame + 1) % 4
+                self.frame = (self.frame + 4 * mygame.ACTION_PER_TIME * mygame.frame_time) % 4
             elif self.type == 1:
-                self.frame = (self.frame + 1) % 6
+                self.frame = (self.frame + 6 * mygame.ACTION_PER_TIME * mygame.frame_time) % 6
             if self.x < -100:
                 self.active = False
 

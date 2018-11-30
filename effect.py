@@ -14,11 +14,11 @@ class Effect:
         self.active = True
     def draw(self):
         if self.active :
-            self.image.clip_draw(self.frame * 181,0,181,165,self.x,self.y)
+            self.image.clip_draw(int(self.frame) * 181,0,181,165,self.x,self.y)
     def update(self):
         if self.active :
             mygame.move_update(self)
-            self.frame = (self.frame + 1) % 6
+            self.frame = (self.frame + 6 * mygame.ACTION_PER_TIME * mygame.frame_time) % 6
             if self.frame == 5:
                 self.active = False
     def exit(self):

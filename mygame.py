@@ -25,6 +25,9 @@ GRASS_SPEED_MPM = (GRASS_SPEED * 1000.0 / 60.0)
 GRASS_SPEED_MPS = (GRASS_SPEED_MPM / 60.0)
 GRASS_SPEED_PPS = (GRASS_SPEED_MPS * PIXEL_PER_METER)
 
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0/ TIME_PER_ACTION
+#FRAMES_PER_ACTION = 8
 frame_time = 0.0
 loop = True
 timestop = False
@@ -187,6 +190,7 @@ def update():
     stage1_sequence.collision(playerchar)
     eat_effect.update()
     frame_time = time.time() - current_time
+
     current_time += frame_time
     print(eat_effect.active)
 
@@ -218,6 +222,7 @@ def exit():
     objects.clear()
     static_objects_group.static_objects.clear()
 
+
 def main():
     global current_time, playerchar
     enter()
@@ -230,7 +235,7 @@ def main():
             update()
             draw()
         playerchar.handle_events()
-        delay(0.04)
+        #delay(0.04)
     exit()
 
 

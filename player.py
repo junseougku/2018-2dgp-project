@@ -24,12 +24,13 @@ class Walk:
         obj.now_image.opacify(1)
     @staticmethod
     def draw(obj):
-        obj.images[0].clip_draw(obj.frame * 129, 0, 129, 146, obj.x, obj.y)
+
+        obj.images[0].clip_draw(int(obj.frame) * 129, 0, 129, 146, obj.x, obj.y)
         return obj.images[0]
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 4
-
+        #obj.frame = (obj.frame + 1) % 4
+        obj.frame = (obj.frame + 4 * mygame.ACTION_PER_TIME * mygame.frame_time) % 4
     @staticmethod
     def collider(obj):
         pass
@@ -53,11 +54,11 @@ class Head:
         obj.y += 30.5
     @staticmethod
     def draw(obj):
-        obj.images[1].clip_draw(obj.frame * 184, 0, 184, 85, obj.x, obj.y)
+        obj.images[1].clip_draw(int(obj.frame) * 184, 0, 184, 85, obj.x, obj.y)
         return obj.images[1]
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 2
+        obj.frame = (obj.frame + 2 * mygame.ACTION_PER_TIME * mygame.frame_time) % 2
     @staticmethod
     def get_bb(obj):
         return [(obj.x - 82, obj.y - 42.5, obj.x + 82, obj.y + 27.5)]
@@ -82,11 +83,11 @@ class Run:
         pass
     @staticmethod
     def draw(obj):
-        obj.images[2].clip_draw(obj.frame * 132 , 0 ,132,148,obj.x,obj.y)
+        obj.images[2].clip_draw(int(obj.frame) * 132 , 0 ,132,148,obj.x,obj.y)
         return obj.images[2]
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 4
+        obj.frame = (obj.frame + 4 * mygame.ACTION_PER_TIME * mygame.frame_time) % 4
     @staticmethod
     def collider(obj):
         pass
@@ -120,14 +121,14 @@ class Jump:
             obj.images[3][0].draw_now(obj.x ,obj.y)
             return obj.images[3][0]
         elif obj.jumpcount >= 10 and obj.jumpcount <= 20:
-            obj.images[3][1].clip_draw(obj.frame * 132 ,0,132,136,obj.x,obj.y)
+            obj.images[3][1].clip_draw(int(obj.frame) * 132 ,0,132,136,obj.x,obj.y)
             return obj.images[3][1]
         elif obj.jumpcount > 20:
             obj.images[3][2].draw_now(obj.x,obj.y)
             return obj.images[3][2]
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 2
+        obj.frame = (obj.frame + 2 * mygame.ACTION_PER_TIME * mygame.frame_time) % 2
     @staticmethod
     def get_bb(obj):
         if obj.jumpcount < 10:
@@ -167,15 +168,14 @@ class DoubleJump:
             obj.images[4][0].draw_now(obj.x, obj.y)
             return obj.images[4][0]
         elif obj.jumpcount >= 40 and obj.jumpcount <= 60:
-            obj.images[4][1].clip_draw(obj.frame * 116, 0, 116, 127, obj.x, obj.y)
+            obj.images[4][1].clip_draw(int(obj.frame) * 116, 0, 116, 127, obj.x, obj.y)
             return obj.images[4][1]
         elif obj.jumpcount > 60:
             obj.images[4][2].draw_now(obj.x,obj.y)
             return obj.images[4][2]
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 3
-
+        obj.frame = (obj.frame + 3 * mygame.ACTION_PER_TIME * mygame.frame_time) % 3
     @staticmethod
     def get_bb(obj):
         if obj.jumpcount < 40:
@@ -208,12 +208,12 @@ class Wound:
 
     @staticmethod
     def draw(obj):
-        obj.images[5].clip_draw(obj.frame * 148, 0, 148, 136, obj.x, obj.y)
+        obj.images[5].clip_draw(int(obj.frame) * 148, 0, 148, 136, obj.x, obj.y)
         return obj.images[5]
 
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 3
+        obj.frame = (obj.frame + 3 * mygame.ACTION_PER_TIME * mygame.frame_time) % 3
         if get_time() - wound_start_time > 1.2:
             obj.blink = False
             obj.now_image.opacify(1)
@@ -236,13 +236,13 @@ class Death:
         pass
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 1) % 3
+        obj.frame = (obj.frame + 3 * mygame.ACTION_PER_TIME * mygame.frame_time) % 3
     @staticmethod
     def draw(obj):
         if obj.frame <= 3:
-            obj.images[5].clip_draw(obj.frame * 148, 0, 148, 136, obj.x, obj.y)
+            obj.images[5].clip_draw(int(obj.frame) * 148, 0, 148, 136, obj.x, obj.y)
         else :
-            obj.images[6].clip_draw((obj.frame -3) * 199, 0, 199, 100, obj.x, obj.y)
+            obj.images[6].clip_draw(int((obj.frame -3)) * 199, 0, 199, 100, obj.x, obj.y)
 
 next_state_table = {
     Walk: {DOWN_DOWN: Head  , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
@@ -367,12 +367,13 @@ class Player:
             if self.doublejumping:
                 jump_stat = 80
             else: jump_stat = 40
-            self.jumpcount += 2
-
+            self.jumpcount = ( self.jumpcount + 35 *mygame.ACTION_PER_TIME * mygame.frame_time)
+            #obj.frame = (obj.frame + 3 * mygame.ACTION_PER_TIME * mygame.frame_time) % 3
+            #self.jumpcount = int(self.jumpcount + 80 * mygame.ACTION_PER_TIME * mygame.frame_time)
             t = self.jumpcount / jump_stat
             y = (2 * t ** 2 - 3 * t + 1) * self.start_y + (-4 * t ** 2 + 4 * t) * self.max_y + (2 * t ** 2 - t) * self.end_y
             self.y = y
-            if self.jumpcount == jump_stat:
+            if self.jumpcount >= jump_stat:
                 self.jumpcount = 0
                 self.jumping = False
                 self.doublejumping = False
