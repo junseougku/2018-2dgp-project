@@ -15,6 +15,7 @@ grass_03 = None
 medicine = None
 coins = None
 obstacle_ = None
+
 stage1_sequence = None
 attack_ball = None
 
@@ -129,9 +130,11 @@ def enter():
     current_time = time.time()
     coins = [item.Coin() for i in range(10)]
     init(medicine,0)
+
     init(grass_01,1)
     init(grass_02,1)
     init(grass_03,1)
+
     for i in range(10):
         init(coins[i],0)
     init(obstacle_,1)
@@ -140,6 +143,7 @@ def enter():
     stage1_sequence = stage01.Stage01()
 
     attack_ball = ball.Ball()
+
 def move_update(obj):
     global slow_start
     if slow_start == True:        #충돌시 객체들은 느려짐
@@ -178,6 +182,7 @@ def update():
     for o in all_objects():
         if playerchar.get_bb(o):
             remove_object(o)
+    static_objects_group.update()
     stage1_sequence.update()
     stage1_sequence.collision(playerchar)
     eat_effect.update()

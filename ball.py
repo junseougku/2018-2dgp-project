@@ -4,7 +4,7 @@ class Ball:
 
     def __init__(self):
         self.frame = 0
-        self.images = [load_image("image\\attack_fly_ball_.png"),load_image("image\\attack_last_ball_png")]
+        self.images = [load_image("image\\attack_fly_ball_.png"),load_image("image\\attack_last_ball_.png")]
         self.active = False
         self.end = False
     def enter(self):

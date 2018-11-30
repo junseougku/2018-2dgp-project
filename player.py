@@ -21,7 +21,7 @@ class Walk:
         obj.now_image.opacify(1)
     @staticmethod
     def exit(obj):
-        pass
+        obj.now_image.opacify(1)
     @staticmethod
     def draw(obj):
         obj.images[0].clip_draw(obj.frame * 129, 0, 129, 146, obj.x, obj.y)
