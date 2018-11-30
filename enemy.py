@@ -34,13 +34,14 @@ class Dead:
         if obj.frame == 6:
             obj.active = False
             return
-            obj.frame = (obj.frame + 5 * mygame.ACTION_PER_TIME * mygame.frame_time *2) % 5
+        obj.frame = (obj.frame + 6 * mygame.ACTION_PER_TIME * mygame.frame_time ) % 6
     @staticmethod
     def exit(obj):
         obj.active = False
     @staticmethod
     def get_bb(obj):
         return 0,0,0,0
+
 
 class Enemy:
     def __init__(self):

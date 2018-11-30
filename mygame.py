@@ -8,6 +8,7 @@ import static_objects_group
 import effect
 import stage01
 import ball
+import enemy
 playerchar = None
 grass_01 = None
 grass_02 = None
@@ -37,7 +38,7 @@ slow_start = False
 slow_speed_start = get_time()
 item_table = {
     item.Coin : 0,
-    item.Medicine : 10
+    item.Medicine : 0
 }
 eat_effect = effect.Effect()
 
@@ -46,7 +47,16 @@ def add_object(o,layer):
     objects[layer].append(o)
 
 def collision_enemy():
-    pass
+    global slow_speed_start, slow_start
+    if playerchar.blink == False:
+        playerchar.cooltime_enter()
+        playerchar.change_state(player.Wound)
+        slow_speed_start = get_time()
+        slow_start = True
+        static_objects_group.hp_ui.setCount(-1)
+        print("eecollsion")
+        if static_objects_group.hp_ui.getCount() == 0:
+            playerchar.change_state(player.Death)
 
 def remove_object(o):
     for i in range(len(objects)):
@@ -57,20 +67,28 @@ def remove_object(o):
             slow_speed_start = get_time()
             slow_start = True
             print("collsion")
+            static_objects_group.hp_ui.setCount(-1)
+            if static_objects_group.hp_ui.getCount() == 0:
+                playerchar.change_state(player.Death)
             break
         if o in objects[i]:
             if i == 1: break
-            print("remove")
+
+
             if type(o) in item_table:
                 if type(o) == item.Coin:
                     if o.active == False: break
                     eat_item_score = o.get_score()
                     o.change_active()
+
                 else :
+                    if type(o) == item.Medicine:
+                        static_objects_group.hp_ui.setCount(1)
                     eat_item_score = item_table[type(o)]
                     objects[i].remove(o)
                     del o
-                eat_effect.enter(playerchar.x, playerchar.y)
+                print("remove")
+                eat_effect.enter(playerchar.x-20, playerchar.y)
             static_objects_group.change_score(eat_item_score)
             break
 def clear():
@@ -149,6 +167,9 @@ def enter():
 
 def move_update(obj):
     global slow_start
+    if static_objects_group.hp_ui.getCount() == 0:
+        if type(obj) != enemy.Enemy:
+            obj.velocity = 0
     if slow_start == True:        #충돌시 객체들은 느려짐
         global slow_speed_start
         if get_time() - slow_speed_start > 0.5:
@@ -187,12 +208,15 @@ def update():
             remove_object(o)
     static_objects_group.update()
     stage1_sequence.update()
-    stage1_sequence.collision(playerchar)
+    #stage1_sequence.collision(playerchar)
+    if stage1_sequence.collision(playerchar):
+        collision_enemy()
+        print("xx")
     eat_effect.update()
     frame_time = time.time() - current_time
 
     current_time += frame_time
-    print(eat_effect.active)
+    #print(eat_effect.active)
 
 
 def draw():

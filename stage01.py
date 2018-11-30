@@ -31,8 +31,10 @@ class Stage01 :
 
     def collision(self,obj):
         if obj.get_bb(self.basic_enemy):
-            if self.basic_enemy.active == False: return
+            if self.basic_enemy.active == False: return False
             print("enemy collision")
             self.basic_enemy.change_state(enemy.Dead)
+            return True
+        return False
 
 

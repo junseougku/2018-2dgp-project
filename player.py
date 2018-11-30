@@ -225,7 +225,7 @@ class Wound:
 
     @staticmethod
     def draw_bb(obj):
-        draw_rectangle(obj.x - 74, obj.y - 66, obj.x + 74, obj.y + 66)
+        pass
 
 class Death:
     @staticmethod
@@ -236,13 +236,24 @@ class Death:
         pass
     @staticmethod
     def update(obj):
-        obj.frame = (obj.frame + 3 * mygame.ACTION_PER_TIME * mygame.frame_time) % 3
+        if obj.frame <= 7:
+            obj.frame = (obj.frame + 7 * mygame.ACTION_PER_TIME * mygame.frame_time /4)
+
     @staticmethod
     def draw(obj):
         if obj.frame <= 3:
             obj.images[5].clip_draw(int(obj.frame) * 148, 0, 148, 136, obj.x, obj.y)
         else :
-            obj.images[6].clip_draw(int((obj.frame -3)) * 199, 0, 199, 100, obj.x, obj.y)
+
+            obj.images[6].clip_draw(int(obj.frame -4) * 199, 0, 199, 120, obj.x, obj.y-20)
+
+    @staticmethod
+    def get_bb(obj):
+        return [(0, 0, 0, 0)]
+
+    @staticmethod
+    def draw_bb(obj):
+        pass
 
 next_state_table = {
     Walk: {DOWN_DOWN: Head  , SPACE_DOWN : Run ,JUMP_DOWN : Jump  },
@@ -329,6 +340,7 @@ class Player:
                 key_event = key_event_table[(event.type, event.key)]
                 self.add_event(key_event)
     def get_bb(self,obj):
+        if obj.get_bb() == (0,0,0,0): return
         left_b,bottom_b,right_b,top_b = obj.get_bb()
         for (_a_l,_a_b,_a_r,_a_t) in self.current_state.get_bb(self):
             if _a_l > right_b : return False
@@ -338,12 +350,14 @@ class Player:
 
             return True
     def cooltime_enter(self):
+        if self.current_state == Death: return
         global cool_start_time
         global cool_end_time
         cool_start_time = get_time()
         cool_end_time = get_time()
         self.blink = True
     def cooltime(self):
+        if self.current_state == Death: return
         global cool_start_time
         global opstat
         global cool_end_time

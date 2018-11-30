@@ -2,10 +2,18 @@ from pico2d import *
 
 class HP:
     def __init__(self):
-        self.x = 150
-        self.y = 350
-        self.image = load_image("image\\bar_hp.png")
+        self.x = 50
+        self.y = 550
+        self.image = load_image("image\\hp.png")
+        self.count = 3
     def draw(self):
-        self.image.draw(self.x,self.y)
+        for i in range(self.count):
+            self.image.draw(self.x + (i * 50),self.y)
+
     def update(self):
         pass
+
+    def setCount(self,_change):
+        self.count = self.count +_change
+    def getCount(self):
+        return self.count
