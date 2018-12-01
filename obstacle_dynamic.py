@@ -31,4 +31,4 @@ class Obstacle_Dynamic:
     def exit(self):
         self.frame = 0
     def get_bb(self):
-        return self.x - 80.5,self.y - 104.5 , self.x + 80.5 , self.y + 104.5
+        return self.x - 60.5,self.y - 64.5 , self.x + 60.5 , self.y + 44.5

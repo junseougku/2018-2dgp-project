@@ -18,6 +18,7 @@ coins = None
 obstacle_ = None
 
 stage1_sequence = None
+stage2_sequence = None
 attack_ball = None
 
 PIXEL_PER_METER = (10.0/ 0.3)
@@ -31,6 +32,7 @@ ACTION_PER_TIME = 1.0/ TIME_PER_ACTION
 #FRAMES_PER_ACTION = 8
 frame_time = 0.0
 loop = True
+loop2 = False
 timestop = False
 timestop_exit = False
 drawbb =True
@@ -262,7 +264,14 @@ def main():
         playerchar.handle_events()
         #delay(0.04)
     exit()
+    next_stage()
+    loop2 = True
+    while loop2:
+        handle_events()
+        stage2_sequence.do()
 
+def next_stage():
+    delay(2)
 
 
 if __name__  == '__main__':

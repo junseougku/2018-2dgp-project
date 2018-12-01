@@ -38,4 +38,6 @@ class Obstacle_line:
     def get_bb(self):
         if self.choice == 2:
             return self.fork.get_bb()
+        elif self.choice == 3:
+            return self.dynamic.get_bb()
         else : return self.pin.get_bb()
