@@ -27,13 +27,13 @@ class Dead:
 
     @staticmethod
     def draw(obj):
+
         obj.images[1].clip_draw(int(obj.frame) * 174,0,174,175,obj.x,obj.y)
 
     @staticmethod
     def update(obj):
-        if obj.frame == 6:
+        if obj.frame >= 5:
             obj.active = False
-            return
         obj.frame = (obj.frame + 6 * mygame.ACTION_PER_TIME * mygame.frame_time ) % 6
     @staticmethod
     def exit(obj):
@@ -55,7 +55,8 @@ class Enemy:
     def enter(self):
         self.current_state.enter(self)
     def draw(self):
-        self.current_state.draw(self)
+        if self.active == True:
+            self.current_state.draw(self)
     def update(self):
         self.current_state.update(self)
         mygame.move_update(self)
