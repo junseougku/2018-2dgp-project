@@ -1,6 +1,7 @@
 from pico2d import *
 import mygame
 import random
+import time
 class Medicine:
     def __init__(self):
         self.frame = 0
@@ -8,13 +9,39 @@ class Medicine:
         self.x = 550
         self.y = 250
         self.velocity = mygame.GRASS_SPEED_PPS
+        self.active = True
+        self.random_time = 0.0
+        self.currenttime = get_time()
+    def enter(self):
+        self.y = random.randint(1, 4) * 100
+        self.x = 900
+        self.active = True
+        self.currenttime = get_time()
     def draw(self):
-        self.medicine_image.clip_draw(int(self.frame) * 85, 0, 85, 87, self.x, self.y)
+        if self.active:
+            self.medicine_image.clip_draw(int(self.frame) * 85, 0, 85, 87, self.x, self.y)
     def update(self):
-        self.frame = (self.frame + 4 * mygame.ACTION_PER_TIME * mygame.frame_time) % 4
-        mygame.move_update(self)
+        if self.active:
+            self.frame = (self.frame + 4 * mygame.ACTION_PER_TIME * mygame.frame_time) % 4
+            mygame.move_update(self)
+        elif self.active == False and get_time() - self.currenttime > self.random_time:
+            self.enter()
     def get_bb(self):
-        return self.x - 42.5, self.y -43.5 , self.x + 42.5, self.y + 43.5
+        if self.active:
+            return self.x - 42.5, self.y -43.5 , self.x + 42.5, self.y + 43.5
+        else : return 0,0,0,0
+    def change_active(self):
+        if self.active :
+            self.active = False
+        else :
+            self.active = True
+
+    def exit(self):
+        self.random_time = random.randint(4, 11)
+        self.currenttime = get_time()
+
+
+
 
 coin_list = [load_image("image\\silvercoin_item_.png"),load_image("image\\goldcoin_item_.png")]
 class Coin:

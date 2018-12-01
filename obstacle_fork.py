@@ -8,8 +8,6 @@ class Obstacle_Fork:
         self.y = 360
         self.velocity = mygame.GRASS_SPEED_PPS
         self.active = False
-    def enter(self):
-        pass
     def draw(self):
         self.image.draw(self.x,self.y)
     def update(self):

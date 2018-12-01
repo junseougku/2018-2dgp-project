@@ -134,9 +134,9 @@ class Jump:
         if obj.jumpcount < 10:
             return [(obj.x - 31.5 , obj.y - 67 , obj.x + 31.5 , obj.y + 47)]
         elif obj.jumpcount >= 10 and obj.jumpcount <= 20:
-            return [(obj.x - 46 , obj.y - 53 , obj.x + 46 , obj.y + 48)]
+            return [(obj.x - 44 , obj.y - 53 , obj.x + 44 , obj.y + 48)]
         elif obj.jumpcount > 20:
-            return [(obj.x - 40.5 , obj.y - 59 , obj.x + 40.5 , obj.y + 44)]
+            return [(obj.x - 38.5 , obj.y - 59 , obj.x + 38.5 , obj.y + 44)]
 
     @staticmethod
     def draw_bb(obj):

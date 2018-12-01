@@ -84,9 +84,10 @@ def remove_object(o):
                 else :
                     if type(o) == item.Medicine:
                         static_objects_group.hp_ui.setCount(1)
+                        o.change_active()
+                        o.exit()
                     eat_item_score = item_table[type(o)]
-                    objects[i].remove(o)
-                    del o
+
                 print("remove")
                 eat_effect.enter(playerchar.x-20, playerchar.y)
             static_objects_group.change_score(eat_item_score)
