@@ -17,7 +17,7 @@ class Obstacle_line:
         #self.pin.set_active(True)
     def choice_obstacle(self):
         self.choice = random.randint(0,3)
-        self.choice = 3
+        #self.choice = 3
     def update(self):
         if mygame.delay_check:
             if self.choice == 2:

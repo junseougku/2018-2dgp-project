@@ -46,12 +46,24 @@ item_table = {
 eat_effect = effect.Effect()
 
 objects = [[],[]]       #움직이고 없어질수 있는 객체들
+
+gold_wav = load_wav("sound\\gold_coin_.wav")
+silver_wav = load_wav("sound\\silver_coin_.wav")
+hp_wav = load_wav("sound\\hp_.wav")
+monster_wav = load_wav("sound\\monster_.wav")
+bgm = load_music("sound\\bgm_.mp3")
+bgm.set_volume(32)
+gold_wav.set_volume(48)
+silver_wav.set_volume(48)
+hp_wav.set_volume(48)
+monster_wav.set_volume(48)
 def add_object(o,layer):
     objects[layer].append(o)
 
 def collision_enemy():
     global slow_speed_start, slow_start
     if playerchar.blink == False:
+        monster_wav.play()
         playerchar.cooltime_enter()
         playerchar.change_state(player.Wound)
         slow_speed_start = get_time()
@@ -61,6 +73,7 @@ def collision_enemy():
             playerchar.change_state(player.Death)
 
 def remove_object(o):
+    global gold_wav,silver_wav
     for i in range(len(objects)):
         if i == 1 and playerchar.blink == False:
             global slow_speed_start,slow_start
@@ -82,12 +95,16 @@ def remove_object(o):
                     if o.active == False: break
                     eat_item_score = o.get_score()
                     o.change_active()
-
+                    if eat_item_score == 10:
+                        gold_wav.play()
+                    elif eat_item_score == 5:
+                        silver_wav.play()
                 else :
                     if type(o) == item.Medicine:
                         static_objects_group.hp_ui.setCount(1)
                         o.change_active()
                         o.exit()
+                        hp_wav.play()
                     eat_item_score = item_table[type(o)]
 
                 print("remove")
@@ -271,7 +288,7 @@ delay_get_time = 4
 def main():
     global current_time, playerchar,delay_get_time
     enter()
-
+    bgm.repeat_play()
    # while game_play == False or game_play_start == False:
    #     draw()
     #start_delay()

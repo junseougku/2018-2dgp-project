@@ -49,6 +49,7 @@ class Head:
     def enter(obj):
         obj.frame = 0
         obj.y -= 30.5
+        obj.sounds[1].play()
     @staticmethod
     def exit(obj):
         obj.y += 30.5
@@ -111,6 +112,7 @@ class Jump:
         obj.max_y = obj.y + 150
         obj.end_y = 100
         obj.jumping = True
+        obj.sounds[0].play()
     @staticmethod
     def exit(obj):
         for i in range(3):
@@ -158,6 +160,7 @@ class DoubleJump:
         obj.max_y = obj.y + 150
         obj.doublejumping = True
         obj.jumpcount = 0
+        obj.sounds[0].play()
     @staticmethod
     def exit(obj):
         for i in range(3):
@@ -202,6 +205,7 @@ class Wound:
         global wound_start_time
         obj.frame = 0
         wound_start_time = get_time()
+        obj.sounds[2].play()
     @staticmethod
     def exit(obj):
         pass
@@ -231,6 +235,7 @@ class Death:
     @staticmethod
     def enter(obj):
         obj.frame = 0
+        obj.sounds[3].play()
     @staticmethod
     def exit(obj):
         pass
@@ -275,6 +280,7 @@ class Player:
                             load_image("image\\player_jump_4.png")] , [ load_image("image\\player_doublejump_1.png") , load_image("image\\doublejump_player_.png")
                                   , load_image("image\\player_doublejump_5.png")]
                        ,load_image("image\\wound_player_.png"), load_image("image\\death_player_.png")]
+        self.sounds = [load_wav('sound\\jump_.wav'),load_wav("sound\\head_.wav"),load_wav("sound\\wound_.wav"),load_wav("sound\\end_.wav")]
         self.x = 150
         self.y = 100
         self.frame = 0
@@ -291,6 +297,8 @@ class Player:
         self.now_image = self.images[0]
         self.jumpcount = 0
         self.bb_count = 0
+        for i in self.sounds:
+            i.set_volume(48)
     def draw(self):
         self.now_image = self.current_state.draw(self)
        # if mygame.drawbb == True:

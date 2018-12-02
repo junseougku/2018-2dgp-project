@@ -22,7 +22,6 @@ class Medicine:
             self.medicine_image.clip_draw(int(self.frame) * 85, 0, 85, 87, self.x, self.y)
     def update(self):
         if mygame.delay_check:
-            print(self.active)
             if self.active and self.x < -250:
                 self.exit()
                 self.active = False
