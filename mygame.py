@@ -185,11 +185,12 @@ def enter():
     attack_ball = ball.Ball()
 
 def move_update(obj):
-    global slow_start
+    global slow_start,bgm
 
     if static_objects_group.hp_ui.getCount() == 0:
         if type(obj) != enemy.Enemy:
             obj.velocity = 0
+            bgm.stop()
 
     if slow_start == True:        #충돌시 객체들은 느려짐
         global slow_speed_start
