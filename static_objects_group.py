@@ -55,6 +55,11 @@ def enter():
     static_object_init(hp_ui,1)
     static_object_init(score_ui,1)
 
+
+def enter2():
+    first_background1.init()
+    first_background2.init()
+    first_background3.init()
 def draw():
     global hp_ui,score_ui
     static_object_draw(sky_stage1, 400, 270)
@@ -66,6 +71,13 @@ def draw():
     hp_ui.draw()
     score_ui.draw()
 
+def draw_2():
+    global hp_ui, score_ui
+    static_object_draw_noneposition(first_background1)
+    static_object_draw_noneposition(first_background2)
+    static_object_draw_noneposition(first_background3)
+    hp_ui.draw()
+    score_ui.draw()
 def change_score(_point):
     score_ui.update(_point)
 

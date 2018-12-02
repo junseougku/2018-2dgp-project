@@ -5,6 +5,7 @@ import obstacle_fork
 import obstacle_pin
 import obstacle_dynamic
 import random
+import mygame
 class Obstacle_line:
     def __init__(self):
         self.choice = 0
@@ -18,18 +19,19 @@ class Obstacle_line:
         self.choice = random.randint(0,3)
         self.choice = 3
     def update(self):
-        if self.choice == 2:
-            self.fork.update()
-        elif self.choice == 3:
-            self.dynamic.update()
-        else :
-            self.pin.update()
+        if mygame.delay_check:
+            if self.choice == 2:
+                self.fork.update()
+            elif self.choice == 3:
+                self.dynamic.update()
+            else :
+                self.pin.update()
 
-        if self.fork.x <-100 or self.pin.x < -100 or self.dynamic.x < -100:
-            self.choice_obstacle()
-            self.fork.enter()
-            self.pin.enter()
-            self.dynamic.enter()
+            if self.fork.x <-100 or self.pin.x < -100 or self.dynamic.x < -100:
+                self.choice_obstacle()
+                self.fork.enter()
+                self.pin.enter()
+                self.dynamic.enter()
     def draw(self):
         self.fork.draw()
         self.pin.draw()

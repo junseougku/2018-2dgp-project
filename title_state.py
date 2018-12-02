@@ -29,4 +29,8 @@ def run():
             running = False
             del(title_image)
 def next_state():
+    global space_down
+    space_down = get_time()
     mygame.main()
+
+space_down = get_time()

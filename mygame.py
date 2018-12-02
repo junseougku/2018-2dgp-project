@@ -21,6 +21,7 @@ stage1_sequence = None
 stage2_sequence = None
 attack_ball = None
 
+now_stage = 1
 PIXEL_PER_METER = (10.0/ 0.3)
 GRASS_SPEED = 40.0
 GRASS_SPEED_MPM = (GRASS_SPEED * 1000.0 / 60.0)
@@ -56,7 +57,6 @@ def collision_enemy():
         slow_speed_start = get_time()
         slow_start = True
         static_objects_group.hp_ui.setCount(-1)
-        print("eecollsion")
         if static_objects_group.hp_ui.getCount() == 0:
             playerchar.change_state(player.Death)
 
@@ -95,7 +95,6 @@ def remove_object(o):
             static_objects_group.change_score(eat_item_score)
             break
 def clear():
-    print("aa")
     for o in all_objects():
         del o
     objects.clear()
@@ -151,7 +150,7 @@ def enter():
     grass_03 = grass.Grass(1293)
     medicine = item.Medicine()
     obstacle_ = obstacle.Obstacle_line()
-    current_time = time.time()
+    current_time = get_time()
     coins = [item.Coin() for i in range(10)]
     init(medicine,0)
 
@@ -170,23 +169,26 @@ def enter():
 
 def move_update(obj):
     global slow_start
+
     if static_objects_group.hp_ui.getCount() == 0:
         if type(obj) != enemy.Enemy:
             obj.velocity = 0
+
     if slow_start == True:        #충돌시 객체들은 느려짐
         global slow_speed_start
+
         if get_time() - slow_speed_start > 0.5:
             slow_start = False
             return
-        elif get_time() - slow_speed_start < 0.1:
+        elif get_time()  - slow_speed_start < 0.1:
             obj.x -= obj.velocity * frame_time / 2
-        elif get_time() - slow_speed_start < 0.2:
+        elif get_time()  - slow_speed_start < 0.2:
             obj.x -= obj.velocity * frame_time / 3
-        elif get_time() - slow_speed_start < 0.3:
+        elif get_time()  - slow_speed_start < 0.3:
             obj.x -= obj.velocity * frame_time / 4
-        elif get_time() - slow_speed_start < 0.4:
+        elif get_time()  - slow_speed_start < 0.4:
             obj.x -= obj.velocity * frame_time / 3
-        elif get_time() - slow_speed_start < 0.5:
+        elif get_time()  - slow_speed_start < 0.5:
             obj.x -= obj.velocity * frame_time / 2
     elif playerchar.running == False:
         obj.x -= obj.velocity * frame_time
@@ -194,35 +196,44 @@ def move_update(obj):
         obj.x -= obj.velocity * frame_time * 2
 
 new_coin_time = get_time()
+next_stage_delaytime = get_time()
+current_stage_clear = False
+delay_check = False
 def update():
-    global frame_time, current_time,coins,new_coin_time
+    global frame_time, current_time,coins,new_coin_time,next_stage_delaytime,current_stage_clear,loop
     playerchar.update()
     playerchar.cooltime()
-    for i in range(10) :
-        if coins[i].active == False and get_time() - new_coin_time > 0.2:
-            new_coin_time = get_time()
-            coins[i].enter()
-            coins[i].change_active()
-            break
+    if delay_check:
+        for i in range(10) :
+            if coins[i].active == False and get_time() - new_coin_time > 0.2:
+                new_coin_time = get_time()
+                coins[i].enter()
+                coins[i].change_active()
+                break
     for o in all_objects():
         o.update()
     for o in all_objects():
         if playerchar.get_bb(o):
             remove_object(o)
     static_objects_group.update()
-    stage1_sequence.update()
+    if delay_check:
+        stage1_sequence.update()
     #stage1_sequence.collision(playerchar)
     if stage1_sequence.collision(playerchar):
         collision_enemy()
-        print("xx")
     eat_effect.update()
-    frame_time = time.time() - current_time
+
+    frame_time = get_time() - current_time #- delay_get_time
+
 
     current_time += frame_time
+
     #print(eat_effect.active)
 
 
 def draw():
+
+
     if timestop == False:
         clear_canvas()
     static_objects_group.draw()
@@ -231,11 +242,16 @@ def draw():
     playerchar.draw()
     stage1_sequence.draw()
     eat_effect.draw()
-    if drawbb == True:
+    if drawbb :
         for o in all_objects():
             draw_rectangle(*o.get_bb())
         stage1_sequence.draw_bb()
         playerchar.draw_bb()
+    if game_play == False:
+        ready_image.draw(400, 300)
+    if game_play == True and game_play_start == False:
+        go_image.draw(400,300)
+    start_delay()
     if timestop == False:
         update_canvas()
 
@@ -249,30 +265,44 @@ def exit():
     objects.clear()
     static_objects_group.static_objects.clear()
 
-
+objects_2 = [[],[]]       #움직이고 없어질수 있는 객체들
+real_get_time = get_time()
+delay_get_time = 4
 def main():
-    global current_time, playerchar
+    global current_time, playerchar,delay_get_time
     enter()
+
+   # while game_play == False or game_play_start == False:
+   #     draw()
+    #start_delay()
+    delay_get_time = get_time()
     while loop:
         handle_events()
-        stage1_sequence.do()
+        if delay_check:
+            stage1_sequence.do()
         if timestop:
-            current_time = time.time()
+            current_time = get_time()
         if timestop == False:
             update()
             draw()
         playerchar.handle_events()
-        #delay(0.04)
     exit()
-    next_stage()
-    loop2 = True
-    while loop2:
-        handle_events()
-        stage2_sequence.do()
-
-def next_stage():
-    delay(2)
 
 
 if __name__  == '__main__':
     main()
+
+ready_image = load_image("image\\ready.png")
+go_image = load_image("image\\go.png")
+game_play = False
+game_play_start = False
+def start_delay():
+    global game_play,game_play_start,delay_get_time,delay_check
+    if get_time() - title_state.space_down > 4:
+        game_play_start = True
+        delay_check= True
+    elif get_time() - title_state.space_down> 2:
+        game_play = True
+
+
+import title_state
