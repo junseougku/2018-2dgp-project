@@ -311,6 +311,7 @@ class Player:
         self.update_jump()
         if len(self.event_que) > 0:
             event = self.event_que.pop()
+            if mygame.delay_check == False: return
             if (event not in next_state_table[self.current_state]) == True:
                 return
             if self.current_state == next_state_table[self.current_state][event]:
@@ -342,7 +343,11 @@ class Player:
                 else: mygame.drawbb = False
             if event.type == SDL_QUIT:
                 mygame.loop = False
+                mygame.regame = False
             elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+                mygame.loop = False
+                mygame.regame = False
+            if event.type == SDL_KEYDOWN and event.key == SDLK_SPACE and mygame.delay_check and mygame.dead :
                 mygame.loop = False
             elif (event.type, event.key) in key_event_table:
                 key_event = key_event_table[(event.type, event.key)]

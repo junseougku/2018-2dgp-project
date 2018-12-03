@@ -132,6 +132,8 @@ def handle_events():
                 timestop_exit = True
             if event.type == SDL_QUIT:
                 loop = False
+
+
         exit_pause()
 
 
@@ -251,7 +253,6 @@ def update():
 
 def draw():
 
-
     if timestop == False:
         clear_canvas()
     static_objects_group.draw()
@@ -270,6 +271,8 @@ def draw():
     if game_play == True and game_play_start == False:
         go_image.draw(400,300)
     start_delay()
+    if get_time() - dead_time > 3 and dead == True:
+        end()
     if timestop == False:
         update_canvas()
 
@@ -286,25 +289,49 @@ def exit():
 objects_2 = [[],[]]       #움직이고 없어질수 있는 객체들
 real_get_time = get_time()
 delay_get_time = 4
+regame = True
 def main():
-    global current_time, playerchar,delay_get_time
+    global current_time, playerchar,delay_get_time,regame,loop
     enter()
-    bgm.repeat_play()
-   # while game_play == False or game_play_start == False:
-   #     draw()
-    #start_delay()
-    delay_get_time = get_time()
-    while loop:
-        handle_events()
-        if delay_check:
-            stage1_sequence.do()
-        if timestop:
-            current_time = get_time()
-        if timestop == False:
-            update()
-            draw()
-        playerchar.handle_events()
+
+
+    while regame:
+        bgm.repeat_play()
+        # while game_play == False or game_play_start == False:
+        #     draw()
+        # start_delay()
+        delay_get_time = get_time()
+
+        while loop:
+            handle_events()
+            if delay_check:
+                stage1_sequence.do()
+            if timestop:
+                current_time = get_time()
+            if timestop == False:
+                update()
+
+                draw()
+            playerchar.handle_events()
+            restart_main()
+        loop = True
+        resetting()
     exit()
+def resetting():
+    global dead,game_play,game_play_start,delay_check,current_stage_clear
+    dead = False
+    game_play = False
+    game_play_start = False
+    delay_check = False
+    current_stage_clear = False
+dead_time = get_time()
+dead = False
+def restart_main():
+    global dead_time,dead
+    if static_objects_group.hp_ui.getCount() == 0 and dead == False:
+        dead_time = get_time()
+        dead = True
+
 
 
 if __name__  == '__main__':
@@ -312,15 +339,20 @@ if __name__  == '__main__':
 
 ready_image = load_image("image\\ready.png")
 go_image = load_image("image\\go.png")
+restart_image =load_image("image\\restart.png")
+enter_key = load_font('ENCR10B.TTF', 48)
 game_play = False
 game_play_start = False
 def start_delay():
     global game_play,game_play_start,delay_get_time,delay_check
+    if delay_check: return
     if get_time() - title_state.space_down > 4:
         game_play_start = True
         delay_check= True
     elif get_time() - title_state.space_down> 2:
         game_play = True
 
-
+def end():
+    restart_image.draw(400,300)
+    enter_key.draw(200 , 200 , 'press enter key', (0, 0, 255))
 import title_state
