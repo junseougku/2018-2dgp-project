@@ -7,7 +7,8 @@ class Background:
         self.x = _x
         self.y = 300
         self.velocity = mygame.GRASS_SPEED_PPS/2
-
+    def enter(self):
+        pass
     def draw(self):
         if mygame.now_stage == 1:
             self.background_image.draw(self.x,self.y)

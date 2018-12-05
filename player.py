@@ -328,6 +328,9 @@ class Player:
     def enter(self):
         self.current_state.enter(self)
     def exit(self):
+        if self.current_state == Death:
+            self.now_image = self.images[0]
+            self.blink = False
         self.now_image.opacify(1)
         self.current_state.exit(self)
     def add_event(self,event):

@@ -63,6 +63,7 @@ class Coin:
     def enter(self):
         self.y = random.randint(2,5) * 100
         self.x = 900
+        self.active = False
     def draw(self):
         if self.active :
             if self.type == 0:

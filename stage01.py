@@ -6,6 +6,8 @@ class Stage01 :
         self.basic_enemy = enemy.Enemy()
         self.monster_Createtime = get_time()
         self.enemy_active_cooltime = 2
+    def enter(self):
+        self.basic_enemy.x = 900
     def do(self):
         if self.basic_enemy.x < -200 and self.basic_enemy.active == True:
             self.basic_enemy.active = False

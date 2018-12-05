@@ -33,6 +33,9 @@ def static_object_draw(obj,_x,_y):
 
 def static_object_draw_noneposition(obj):
     obj.draw()
+
+def init():
+    score_ui.enter()
 def enter():
     global sky_stage1, stage1,background1,count_pause_time_image,hp_ui,score_ui,first_background1,first_background2,first_background3
     stage1 = load_image("image\\stage_1.png")

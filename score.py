@@ -11,3 +11,5 @@ class score:
 
     def update(self,_point):
         self.score += _point
+    def enter(self):
+        self.score = 0

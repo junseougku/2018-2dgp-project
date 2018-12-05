@@ -21,7 +21,6 @@ stage1_sequence = None
 stage2_sequence = None
 attack_ball = None
 
-now_stage = 1
 PIXEL_PER_METER = (10.0/ 0.3)
 GRASS_SPEED = 40.0
 GRASS_SPEED_MPM = (GRASS_SPEED * 1000.0 / 60.0)
@@ -33,7 +32,7 @@ ACTION_PER_TIME = 1.0/ TIME_PER_ACTION
 #FRAMES_PER_ACTION = 8
 frame_time = 0.0
 loop = True
-loop2 = False
+
 timestop = False
 timestop_exit = False
 drawbb =True
@@ -191,8 +190,8 @@ def move_update(obj):
 
     if static_objects_group.hp_ui.getCount() == 0:
         if type(obj) != enemy.Enemy:
-            obj.velocity = 0
             bgm.stop()
+            return
 
     if slow_start == True:        #충돌시 객체들은 느려짐
         global slow_speed_start
@@ -214,7 +213,6 @@ def move_update(obj):
         obj.x -= obj.velocity * frame_time
     else:
         obj.x -= obj.velocity * frame_time * 2
-
 new_coin_time = get_time()
 next_stage_delaytime = get_time()
 current_stage_clear = False
@@ -252,7 +250,6 @@ def update():
 
 
 def draw():
-
     if timestop == False:
         clear_canvas()
     static_objects_group.draw()
@@ -290,6 +287,7 @@ objects_2 = [[],[]]       #움직이고 없어질수 있는 객체들
 real_get_time = get_time()
 delay_get_time = 4
 regame = True
+now_stage = 1
 def main():
     global current_time, playerchar,delay_get_time,regame,loop
     enter()
@@ -310,20 +308,34 @@ def main():
                 current_time = get_time()
             if timestop == False:
                 update()
-
                 draw()
             playerchar.handle_events()
             restart_main()
         loop = True
         resetting()
     exit()
+    close_canvas()
 def resetting():
-    global dead,game_play,game_play_start,delay_check,current_stage_clear
+    global dead,game_play,game_play_start,delay_check,current_stage_clear,frame_time
     dead = False
     game_play = False
     game_play_start = False
     delay_check = False
     current_stage_clear = False
+    static_objects_group.hp_ui.setCount(3)
+    title_state.space_down = get_time()
+    playerchar.change_state(player.Walk)
+    frame_time = 0.0
+    medicine.enter()
+    grass_01.enter()
+    grass_02.enter()
+    grass_03.enter()
+    stage1_sequence.enter()
+    for i in range(10):
+        coins[i].enter()
+    obstacle_.enter()
+    static_objects_group.init()
+
 dead_time = get_time()
 dead = False
 def restart_main():
@@ -354,5 +366,5 @@ def start_delay():
 
 def end():
     restart_image.draw(400,300)
-    enter_key.draw(200 , 200 , 'press enter key', (0, 0, 255))
+    enter_key.draw(200 , 200 , 'press space bar ', (0, 0, 255))
 import title_state

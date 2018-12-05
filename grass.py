@@ -11,6 +11,8 @@ class Grass:
         self.grass_image = load_image("image\\grass_01.png")
     def draw(self):
         self.grass_image.draw(self.x,self.y)
+    def enter(self):
+        pass
     def update(self):
         mygame.move_update(self)
         if self.x < -431:

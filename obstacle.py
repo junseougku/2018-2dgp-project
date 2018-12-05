@@ -15,6 +15,10 @@ class Obstacle_line:
         self.dynamic = obstacle_dynamic.Obstacle_Dynamic()
         #self.fork.set_active(False)
         #self.pin.set_active(True)
+    def enter(self):
+        self.fork.enter()
+        self.pin.enter()
+        self.dynamic.enter()
     def choice_obstacle(self):
         self.choice = random.randint(0,3)
         #self.choice = 3

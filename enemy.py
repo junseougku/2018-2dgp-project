@@ -53,6 +53,7 @@ class Enemy:
         self.active = False
         self.current_state = Dead
     def enter(self):
+        self.x = 900
         self.current_state.enter(self)
     def draw(self):
         if self.active == True:
